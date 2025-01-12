@@ -7,6 +7,12 @@
       "default_popup": "popup.html"
     },
     "permissions": ["tabs", "activeTab", "http://localhost/*"],
+    "content_scripts": [
+      {
+        "matches":["<all_urls>"],
+        "js":["content.js"]
+      }
+    ],
     "host_permissions": ["<all_urls>"],
     "background": {
       "service_worker": "background.js"
