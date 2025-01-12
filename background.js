@@ -174,67 +174,57 @@ function analyzeScreenshotWithOpenAI(base64Screenshot, goal, sessionId) {
 function handleOffTask(tabId) {
   console.log(`Off-task behavior detected for TabId = ${tabId}`);
 
-  // Step 1: Inject a content script to display the GIF
-  chrome.scripting.executeScript(
-    {
-      target: { tabId: tabId },
-      func: showGifOverlay,
-    },
-    () => {
-      if (chrome.runtime.lastError) {
-        console.error(`Failed to inject script: ${chrome.runtime.lastError.message}`);
-        performTabAction(tabId); // Fallback if injection fails
-      } else {
-        // Step 2: Delay the tab action
-        setTimeout(() => performTabAction(tabId), 3000); // Delay for 3 seconds
-      }
-    }
-  );
-}
+  let firstGifSrc = 'https://github.com/RohanT766/DeltaHacksXI/blob/main/animateWing1.gif?raw=true'; // First GIF (on current page)
 
-// Function to display the GIF overlay
-function showGifOverlay() {
-  const gifUrl = chrome.runtime.getURL("animateWing1.gif"); // Replace with your GIF URL
-
-  // Create an overlay element
-  const overlay = document.createElement("div");
-  overlay.style.position = "fixed";
-  overlay.style.top = "0";
-  overlay.style.left = "0";
-  overlay.style.width = "100%";
-  overlay.style.height = "100%";
-  overlay.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
-  overlay.style.zIndex = "9999";
-  overlay.style.display = "flex";
-  overlay.style.alignItems = "center";
-  overlay.style.justifyContent = "center";
-
-  // Create the GIF element
-  const gif = document.createElement("img");
-  gif.src = gifUrl;
-  gif.style.maxWidth = "80%";
-  gif.style.maxHeight = "80%";
-  overlay.appendChild(gif);
-
-  // Add the overlay to the body
-  document.body.appendChild(overlay);
-
-  // Remove the overlay after 3 seconds
-  setTimeout(() => {
-    overlay.remove();
-  }, 3000);
-}
-
-// Function to perform the tab action (close or redirect)
-function performTabAction(tabId) {
   if (tabHistory[tabId] && tabHistory[tabId].length > 1) {
     // Redirect to the last meaningful page
     const previousUrl = tabHistory[tabId][tabHistory[tabId].length - 2];
     console.log(`Redirecting to previous page: ${previousUrl}`);
-    chrome.tabs.update(tabId, { url: previousUrl });
+
+    // Inject the first GIF before redirecting (on the current page)
+    chrome.scripting.executeScript({
+      target: { tabId: tabId },
+      func: injectGif,
+      args: [firstGifSrc]
+    });
+
+    // Wait for a few seconds before redirecting to give time for GIF to show
+    setTimeout(() => {
+      chrome.tabs.update(tabId, { url: previousUrl });
+    }, 2000); // Adjust delay as needed (2 seconds here)
+
   } else {
-    // Close the tab if it's a new tab
+    // If the tab is new, show the GIF before closing the tab
     console.log(`Closing new tab: TabId = ${tabId}`);
-    chrome.tabs.remove(tabId);
+
+    // Inject the first GIF on the current tab (before closure)
+    chrome.scripting.executeScript({
+      target: { tabId: tabId },
+      func: injectGif,
+      args: [firstGifSrc]
+    });
+
+    // Delay tab closure to allow the first GIF to be visible
+    setTimeout(() => {
+      // Close the tab
+      chrome.tabs.remove(tabId);
+    }, 2000); // Adjust delay as needed (2 seconds here)
   }
 }
+
+// Helper function to inject the GIF into the page
+function injectGif(gifSrc) {
+  const body = document.body;
+  const img = document.createElement('img');
+  img.src = gifSrc;
+  img.style.position = 'absolute';
+  img.style.top = '0';
+  img.style.left = '0';
+  img.style.width = '100%';
+  img.style.height = '100%';
+  img.style.zIndex = '9999999'; // On top of other content
+  img.style.pointerEvents = 'none'; // Make sure it doesn't block interactions
+  img.style.opacity = '1'; // Semi-transparent overlay
+  body.appendChild(img);
+}
+
