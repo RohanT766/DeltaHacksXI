@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   const goalContainer = document.getElementById("goalContainer");
+  let finalOwlPosition = null; // To store the final position and size of the flying owl
 
   // Fetch the current tracking state
   chrome.runtime.sendMessage({ type: "getTrackingState" }, (response) => {
@@ -14,12 +15,21 @@ document.addEventListener("DOMContentLoaded", () => {
   function displayGoalInput() {
     goalContainer.innerHTML = `
       <h1 class="owl-title">Owl's Honor!</h1>
-      <p class="owl-paragraph">“Hoot hoot! Enter your wise goal below.”</p>
+      <p class="owl-paragraph">Hoot hoot! Enter your wise goal below:</p>
+
+      <!-- Main Owl GIF -->
+      <img 
+        src="https://media.giphy.com/media/5BTz4HSGbL7l6su75e/giphy.gif" 
+        alt="Owl GIF" 
+        class="owl-gif"
+        id="owlGif"
+      />
+
       <input 
         type="text" 
         id="goalInput" 
         class="owl-input" 
-        placeholder="e.g. finishing Calc 1 homework, edit a video..."
+        placeholder="e.g., Study under the moonlight..."
       />
       <button id="startBtn" class="owl-button">Start Tracking</button>
       <p id="statusMessage" class="owl-status"></p>
@@ -32,14 +42,59 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
+      // Attempt to start tracking
       chrome.runtime.sendMessage({ type: "startTracking", goal: goalInput }, (response) => {
         if (response.success) {
+          const originalOwl = document.getElementById("owlGif");
+          const rect = originalOwl.getBoundingClientRect();
+
+          // Switch to active goal screen first
           displayActiveGoal(response.goal);
-          console.log(`Goal set: "${goalInput}". Tracking started.`);
+
+          // Then animate the flying owl
+          animateFlyingOwl(rect);
         } else {
           updateStatusMessage("Uh-oh! We couldn’t start tracking.", "red");
         }
       });
+    });
+  }
+
+  // Animate an owl in the active goal screen
+  function animateFlyingOwl(rect) {
+    // Create a flying owl duplicate
+    const flyingOwl = document.createElement("img");
+    flyingOwl.src = "https://media.giphy.com/media/5BTz4HSGbL7l6su75e/giphy.gif";
+    flyingOwl.className = "owl-fly";
+
+    // Set its initial position and size
+    flyingOwl.style.width = rect.width + "px";
+    flyingOwl.style.height = rect.height + "px";
+    flyingOwl.style.left = rect.left + "px";
+    flyingOwl.style.top = rect.top + "px";
+
+    // Append it to the body
+    document.body.appendChild(flyingOwl);
+
+    // Force reflow to apply initial position
+    flyingOwl.getBoundingClientRect();
+
+    // Animate to the top-right corner
+    flyingOwl.style.transform = "translate(300px, -250px) scale(0.8)";
+    flyingOwl.style.opacity = "0.7";
+
+    // Listen for transition end to remove the flying owl and save final position
+    flyingOwl.addEventListener("transitionend", () => {
+      // Save the final position and size
+      const finalRect = flyingOwl.getBoundingClientRect();
+      finalOwlPosition = {
+        left: finalRect.left,
+        top: finalRect.top,
+        width: finalRect.width,
+        height: finalRect.height,
+      };
+
+      document.body.removeChild(flyingOwl); // Remove the flying owl
     });
   }
 
@@ -56,7 +111,6 @@ document.addEventListener("DOMContentLoaded", () => {
       chrome.runtime.sendMessage({ type: "stopTracking" }, (response) => {
         if (response.success) {
           displayGoalInput();
-          console.log("Tracking stopped.");
         } else {
           updateStatusMessage("Hoot! Couldn't stop tracking.", "red");
         }
@@ -67,8 +121,27 @@ document.addEventListener("DOMContentLoaded", () => {
   // Update the status message
   function updateStatusMessage(message, color) {
     const statusMessage = document.getElementById("statusMessage");
+    if (!statusMessage) return;
     statusMessage.textContent = message;
-    // We still handle dynamic color in JS
     statusMessage.style.color = color;
   }
+
+  // Add an owl at the saved position when the popup loses focus (user clicks off)
+  document.body.addEventListener("blur", () => {
+    if (!finalOwlPosition) return; // Only proceed if there's a saved position
+
+    const persistentOwl = document.createElement("img");
+    persistentOwl.src = "https://media.giphy.com/media/5BTz4HSGbL7l6su75e/giphy.gif";
+    persistentOwl.className = "owl-fly"; // Use the same class for styling
+
+    // Set the saved position and size
+    persistentOwl.style.position = "absolute";
+    persistentOwl.style.left = finalOwlPosition.left + "px";
+    persistentOwl.style.top = finalOwlPosition.top + "px";
+    persistentOwl.style.width = finalOwlPosition.width + "px";
+    persistentOwl.style.height = finalOwlPosition.height + "px";
+
+    // Append the persistent owl to the body
+    document.body.appendChild(persistentOwl);
+  });
 });
