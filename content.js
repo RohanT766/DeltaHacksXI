@@ -1,26 +1,30 @@
-// Create the owl GIF
-const owl = document.createElement("img");
-owl.src = "https://media.giphy.com/media/5BTz4HSGbL7l6su75e/giphy.gif";
-owl.style.position = "fixed";
-owl.style.width = "150px";
-owl.style.zIndex = "9999";
-owl.style.top = "50%";
-owl.style.left = "50%";
-owl.style.transform = "translate(-50%, -50%)";
-owl.style.transition = "all 2s ease-in-out";
-
-// Add the owl to the page
-document.body.appendChild(owl);
-
-// Animate the owl flying to the top-right corner
-setTimeout(() => {
-  owl.style.top = "10px";
-  owl.style.left = "calc(100% - 160px)";
-  owl.style.transform = "none";
-  owl.style.opacity = "0.7";
-}, 100);
-
-// Remove the owl after the animation ends
-setTimeout(() => {
-  owl.remove();
-}, 2500);
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.type === "startOwlAnimation") {
+      animateOwl();
+    }
+  });
+  
+  function animateOwl() {
+    // Create the owl element
+    const owl = document.createElement("img");
+    owl.src = "https://media.giphy.com/media/5BTz4HSGbL7l6su75e/giphy.gif";
+    owl.style.position = "fixed";
+    owl.style.width = "150px";
+    owl.style.zIndex = "999999";
+    owl.style.left = "20px"; // Start near the bottom-left of the screen
+    owl.style.bottom = "20px"; // Bottom-left corner
+    owl.style.transition = "transform 2s ease-in-out, opacity 2s ease-in-out";
+    document.body.appendChild(owl);
+  
+    // Trigger animation to the top-right corner
+    requestAnimationFrame(() => {
+      owl.style.transform = "translate(calc(100vw - 200px), -calc(100vh - 200px)) scale(0.7)";
+      owl.style.opacity = "0.7";
+    });
+  
+    // Remove the owl after the animation ends
+    owl.addEventListener("transitionend", () => {
+      owl.remove();
+    });
+  }
+  
