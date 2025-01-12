@@ -1,11 +1,11 @@
-/* Reset */
+/* Basic reset */
 * {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
   }
   
-  /* Popup body */
+  /* Body of the popup */
   body {
     width: 320px;
     min-height: 300px;
@@ -14,9 +14,10 @@
     border-radius: 10px;
     overflow: hidden;
     border: 2px solid #d5cbb2;
+    position: relative; /* To position flying owl relative to popup */
   }
   
-  /* Container for content */
+  /* Container for the goal content */
   #goalContainer {
     margin: 16px;
     padding: 20px;
@@ -26,9 +27,10 @@
       inset 0 2px 4px rgba(0, 0, 0, 0.06),
       0 4px 8px rgba(0, 0, 0, 0.2);
     border: 1px solid #d5cbb2;
+    position: relative; /* To assist with owl positioning */
   }
   
-  /* Titles */
+  /* Title text */
   .owl-title {
     margin-bottom: 10px;
     font-size: 1.25rem;
@@ -36,7 +38,7 @@
     text-shadow: 1px 1px #faf9f2;
   }
   
-  /* Paragraphs */
+  /* Paragraph text */
   .owl-paragraph {
     margin-bottom: 10px;
     font-size: 0.95rem;
@@ -47,12 +49,13 @@
   .owl-gif {
     display: block;
     max-width: 100%;
+    width: 150px; /* Fixed width for consistency */
     height: auto;
     margin: 0 auto 15px;
     border-radius: 8px;
   }
   
-  /* Input */
+  /* Input field */
   .owl-input {
     display: block;
     width: 100%;
@@ -83,6 +86,7 @@
       0 3px 5px rgba(0, 0, 0, 0.25);
     transition: transform 0.1s, box-shadow 0.1s;
   }
+  
   .owl-button:hover {
     background: linear-gradient(to bottom, #eee6d4, #c9b79c);
     transform: scale(1.03);
@@ -90,6 +94,7 @@
       0 1px 0 #fefdf8 inset,
       0 4px 6px rgba(0, 0, 0, 0.3);
   }
+  
   .owl-button:active {
     transform: translateY(2px);
     box-shadow:
@@ -105,12 +110,12 @@
     text-shadow: 1px 1px #faf9f2;
   }
   
-  /* FLYING OWL DUPLICATE:
-     We'll position it absolutely, then transition to top-right corner. */
+  /* Flying owl animation */
   .owl-fly {
     position: absolute;
-    z-index: 9999; /* ensure it appears on top */
+    z-index: 9999; /* Ensure it appears above all content */
+    width: 150px; /* Same size as the main owl GIF */
     transition: transform 1.5s ease-in-out, opacity 1.5s ease-in-out;
-    width: 80px; /* or any size you like for the flying clone */
+    pointer-events: none; /* Allow clicks through the flying owl */
   }
   
