@@ -179,3 +179,4 @@ function injectAndMoveGif() {
   // Call function to move the owl upwards
   moveOwl();
 }
+injectAndMoveGif();
