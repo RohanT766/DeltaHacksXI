@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Delay the display of the active goal until after the owl animation
             setTimeout(() => {
               displayActiveGoal(response.goal);
-            }, 700); // Adjust the delay as necessary
+            }, 1); // Adjust the delay as necessary
 
             // Send a message to content.js to animate the owl on the active webpage
             sendOwlToWebpage();
