@@ -146,22 +146,5 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Add an owl at the saved position when the popup loses focus (user clicks off)
-  document.body.addEventListener("blur", () => {
-    if (!finalOwlPosition) return; // Only proceed if there's a saved position
 
-    const persistentOwl = document.createElement("img");
-    persistentOwl.src = "https://media.giphy.com/media/5BTz4HSGbL7l6su75e/giphy.gif";
-    persistentOwl.className = "owl-fly"; // Use the same class for styling
-
-    // Set the saved position and size
-    persistentOwl.style.position = "absolute";
-    persistentOwl.style.left = finalOwlPosition.left + "px";
-    persistentOwl.style.top = finalOwlPosition.top + "px";
-    persistentOwl.style.width = finalOwlPosition.width + "px";
-    persistentOwl.style.height = finalOwlPosition.height + "px";
-
-    // Append the persistent owl to the body
-    document.body.appendChild(persistentOwl);
-  });
 });
