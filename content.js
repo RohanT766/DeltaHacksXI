@@ -3,8 +3,8 @@ const OWL_GIF_URL = "https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExNXJoaWxpc2JhM2
 // GIF URL for the owl during its initial flight and for flying away
 const FLYING_OWL_GIF_URL = "https://media.giphy.com/media/5BTz4HSGbL7l6su75e/giphy.gif";
 
-let currentOwl = null; // Track the current owl element on screen
-let thoughtBubble = null; // Track the thought bubble element
+let currentOwl = null;          // Track the current owl element on screen
+let thoughtBubble = null;       // Track the thought bubble element
 
 // Append CSS for bobbing animation if not already present
 (function addBobbingAnimationCSS() {
@@ -24,8 +24,10 @@ let thoughtBubble = null; // Track the thought bubble element
 // Function to create and display a thought bubble next to the owl
 function addThoughtBubble() {
   if (!currentOwl) return;
-  // Create thought bubble element
+  
+  // Create thought bubble element with a unique id
   thoughtBubble = document.createElement("img");
+  thoughtBubble.id = "thoughtBubble";
   thoughtBubble.src = "https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExcjQ2ZHR0emV3bWkyNmV6NmVraWk5amhkb2k5bGVneWx6dzc3MnZvaiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/D3lDc9D3uBxXLShs8K/giphy.gif";
   thoughtBubble.style.position = "fixed";
   thoughtBubble.style.width = "100px"; // Adjust size as needed
@@ -34,21 +36,29 @@ function addThoughtBubble() {
   // Position the bubble next to the owl
   const owlRect = currentOwl.getBoundingClientRect();
   thoughtBubble.style.top = `${owlRect.top - 20}px`;
-  thoughtBubble.style.left = `${owlRect.right - 200}px`;
+  thoughtBubble.style.left = `${owlRect.right + 10}px`;
 
   document.body.appendChild(thoughtBubble);
 }
 
 // Function to remove the thought bubble
 function removeThoughtBubble() {
+  // Attempt to remove by reference first
   if (thoughtBubble) {
     thoughtBubble.remove();
     thoughtBubble = null;
+  } else {
+    // Fallback: remove by id if element still exists in DOM
+    const bubble = document.getElementById("thoughtBubble");
+    if (bubble) {
+      bubble.remove();
+    }
   }
 }
 
 // Function to make the owl fly in from the top-right corner
 function animateOwlIntoScreen() {
+  // Remove any existing owl and thought bubble before creating a new one
   if (currentOwl) {
     currentOwl.remove();
     currentOwl = null;
