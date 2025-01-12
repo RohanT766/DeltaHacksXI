@@ -284,7 +284,8 @@ function showBlurOverlay(tabId, goal, base64Screenshot) {
       })
         .then((response) => response.json())
         .then((data) => {
-          if (data.result === "pass") {
+          console.log("User response validation result:", String(data).toUpperCase());
+          if (String(data).toUpperCase() == "PASS") {
             console.log("User response validated. Removing overlay.");
             chrome.scripting.executeScript({
               target: { tabId: tabId },
