@@ -47,7 +47,7 @@
   /* Owl GIF */
   .owl-gif {
     display: block;
-    width: 180px; /* Fixed width for consistency */
+    width: 250px; /* Fixed width for consistency */
     height: auto;
     margin: 0 auto 20px;
     border-radius: 10px;
