@@ -79,8 +79,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Force reflow to apply initial position
     flyingOwl.getBoundingClientRect();
 
-    // Animate to the top-right corner
-    flyingOwl.style.transform = "translate(300px, -250px) scale(0.8)";
+    // Animate straight up
+    flyingOwl.style.transform = "translateY(-200px)"; // Move up 200px
     flyingOwl.style.opacity = "0.7";
 
     // Listen for transition end to remove the flying owl and save final position
