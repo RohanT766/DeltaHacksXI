@@ -4,12 +4,7 @@ let currentSession = null; // Tracks the current session
 let lastCaptureTime = 0;   // Tracks the last time a screenshot was taken
 let isTracking = false;    // Tracks whether goal tracking is active
 let currentGoal = "";      // Stores the active goal
-
-// ----------------------------------
-// 1. Insert your OpenAI API key here
-//    or fetch it securely from elsewhere.
-// ----------------------------------
-const OPENAI_API_KEY = "placeholder";
+let tabHistory = {};       // Keeps track of tab history to handle redirection
 
 // Start or stop tracking
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -21,8 +16,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   } else if (message.type === "stopTracking") {
     isTracking = false;
     console.log("Tracking stopped.");
-    currentSession = null; // End any ongoing session
-    currentGoal = "";
+    endSession(); // Ensure session ends immediately
     sendResponse({ success: true });
   } else if (message.type === "getTrackingState") {
     sendResponse({ isTracking, goal: currentGoal });
@@ -33,6 +27,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (isTracking && changeInfo.status === "complete" && tab.url) {
     console.log(`Page changed: ${tab.url}`);
+    updateTabHistory(tabId, tab.url);
     startSession(tabId, tab.url);
   }
 });
@@ -41,6 +36,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 chrome.tabs.onCreated.addListener((tab) => {
   if (isTracking) {
     console.log(`New tab opened: ${tab.id}, URL = ${tab.url || "about:blank"}`);
+    updateTabHistory(tab.id, tab.url || "about:blank");
     startSession(tab.id, tab.url || "about:blank");
   }
 });
@@ -50,17 +46,34 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
   if (isTracking) {
     chrome.tabs.get(activeInfo.tabId, (tab) => {
       console.log(`Switched to tab: TabId = ${activeInfo.tabId}, URL = ${tab.url}`);
+      updateTabHistory(activeInfo.tabId, tab.url);
       startSession(activeInfo.tabId, tab.url);
     });
   }
 });
 
+// Function to update tab history
+function updateTabHistory(tabId, url) {
+  if (!url || url.startsWith("chrome://") || url.startsWith("about:")) {
+    // Ignore restricted or blank URLs
+    return;
+  }
+
+  if (!tabHistory[tabId]) {
+    tabHistory[tabId] = [];
+  }
+
+  // Only add the URL if it differs from the last recorded URL
+  const history = tabHistory[tabId];
+  if (history.length === 0 || history[history.length - 1] !== url) {
+    tabHistory[tabId].push(url);
+    console.log(`Updated history for TabId = ${tabId}:`, tabHistory[tabId]);
+  }
+}
+
 // Function to start a new session
 function startSession(tabId, url) {
-  if (currentSession) {
-    console.log(`Ending session for TabId = ${currentSession.tabId}, URL = ${currentSession.url}`);
-    currentSession = null;
-  }
+  endSession(); // End any ongoing session
 
   // Ignore restricted or blank URLs
   if (!url || url.startsWith("chrome://") || url.startsWith("about:")) {
@@ -68,21 +81,30 @@ function startSession(tabId, url) {
     return;
   }
 
-  currentSession = { tabId, url };
+  // Start a new session
+  currentSession = { tabId, url, sessionId: Date.now() }; // Add sessionId to track session validity
   console.log(`Starting new session for TabId = ${tabId}, URL = ${url}`);
 
-  // Take a screenshot after a short delay
+  // Take a screenshot after a 2-second delay
   setTimeout(() => {
     if (currentSession && currentSession.tabId === tabId) {
-      takeScreenshot(url);
+      takeScreenshot(url, currentSession.sessionId); // Pass sessionId to ensure validity
     } else {
       console.log("Session ended before screenshot could be taken.");
     }
-  }, 1000);
+  }, 2000);
+}
+
+// Function to end the current session
+function endSession() {
+  if (currentSession) {
+    console.log(`Ending session for TabId = ${currentSession.tabId}, URL = ${currentSession.url}`);
+    currentSession = null;
+  }
 }
 
 // Function to take a screenshot with error handling
-function takeScreenshot(url) {
+function takeScreenshot(url, sessionId) {
   const now = Date.now();
   // Avoid taking screenshots too frequently
   if (now - lastCaptureTime < 1000) {
@@ -100,24 +122,21 @@ function takeScreenshot(url) {
     console.log(`Screenshot taken for ${url}`);
     console.log("Screenshot (base64):", dataUrl.slice(0, 100) + "...");
 
-    // ------------------------------------------------
-    // 2. Send screenshot (Base64) to OpenAI for analysis
-    // ------------------------------------------------
-    analyzeScreenshotWithOpenAI(dataUrl, currentGoal);
+    // Analyze the screenshot with OpenAI
+    analyzeScreenshotWithOpenAI(dataUrl, currentGoal, sessionId);
   });
 }
 
 /**
  * Calls the OpenAI API to analyze the screenshot in relation to the current goal.
- * Logs the number from 1-100 representing the confidence that the user is off-task.
  */
-function analyzeScreenshotWithOpenAI(base64Screenshot, goal) {
-  // Construct the prompt as required
-  const prompt = `
-Given to you is a screenshot of the user’s current activity on Chrome. Your job is to determine the current productiveness of the user based off of the content they are viewing, and more specifically the relevance to their stated goal in this work/study session: “${goal}”. You must be harsh, but not overly harsh. Take for example if the user’s goal is to study calculus and the screenshot shows them watching a video about F1 or texting about video games on Instagram, you may be confident in your assertion that the content on screen is unproductive and irrelevant. You must return a number from 1-100 representing the percentage of confidence you have that the user is off task. Reply with only that number and nothing else.
-`;
+function analyzeScreenshotWithOpenAI(base64Screenshot, goal, sessionId) {
+  // Ensure the session is still valid before making the API call
+  if (!currentSession || currentSession.sessionId !== sessionId) {
+    console.log("Session ended or replaced. Disregarding API call.");
+    return;
+  }
 
-  // Prepare request for OpenAI Chat Completion (GPT-3.5, GPT-4, etc.)
   fetch("http://localhost:8080/analyze_screenshot", {
     method: "POST",
     headers: {
@@ -130,10 +149,19 @@ Given to you is a screenshot of the user’s current activity on Chrome. Your jo
   })
     .then((response) => response.json())
     .then((data) => {
-      // 'data' might look like { "score": "85" }
+      // Check if the session is still valid before processing the result
+      if (!currentSession || currentSession.sessionId !== sessionId) {
+        console.log("Session ended or replaced after API response. Disregarding result.");
+        return;
+      }
+
       if (data) {
-        console.log("OpenAI Off-Task Confidence Score:", data);
-        // do something with data.score
+        const offTaskScore = parseInt(data, 10);
+        console.log("OpenAI Off-Task Confidence Score:", offTaskScore);
+
+        if (offTaskScore > 70) {
+          handleOffTask(currentSession.tabId);
+        }
       } else {
         console.error("No valid score returned from server:", data);
       }
@@ -141,5 +169,19 @@ Given to you is a screenshot of the user’s current activity on Chrome. Your jo
     .catch((error) => {
       console.error("Error calling Python API:", error);
     });
-  
+}
+
+// Function to handle off-task behavior
+function handleOffTask(tabId) {
+  console.log(`Off-task behavior detected for TabId = ${tabId}`);
+  if (tabHistory[tabId] && tabHistory[tabId].length > 1) {
+    // Redirect to the last meaningful page
+    const previousUrl = tabHistory[tabId][tabHistory[tabId].length - 2];
+    console.log(`Redirecting to previous page: ${previousUrl}`);
+    chrome.tabs.update(tabId, { url: previousUrl });
+  } else {
+    // Close the tab if it's a new tab
+    console.log(`Closing new tab: TabId = ${tabId}`);
+    chrome.tabs.remove(tabId);
+  }
 }
