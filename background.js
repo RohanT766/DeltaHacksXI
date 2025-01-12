@@ -1,9 +1,15 @@
 console.log("Background script is running!");
 
 let currentSession = null; // Tracks the current session
-let lastCaptureTime = 0; // Tracks the last time a screenshot was taken
-let isTracking = false; // Tracks whether goal tracking is active
-let currentGoal = ""; // Stores the active goal
+let lastCaptureTime = 0;   // Tracks the last time a screenshot was taken
+let isTracking = false;    // Tracks whether goal tracking is active
+let currentGoal = "";      // Stores the active goal
+
+// ----------------------------------
+// 1. Insert your OpenAI API key here
+//    or fetch it securely from elsewhere.
+// ----------------------------------
+const OPENAI_API_KEY = "placeholder";
 
 // Start or stop tracking
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -56,6 +62,7 @@ function startSession(tabId, url) {
     currentSession = null;
   }
 
+  // Ignore restricted or blank URLs
   if (!url || url.startsWith("chrome://") || url.startsWith("about:")) {
     console.log(`Skipping session for restricted or blank URL: ${url}`);
     return;
@@ -64,6 +71,7 @@ function startSession(tabId, url) {
   currentSession = { tabId, url };
   console.log(`Starting new session for TabId = ${tabId}, URL = ${url}`);
 
+  // Take a screenshot after a short delay
   setTimeout(() => {
     if (currentSession && currentSession.tabId === tabId) {
       takeScreenshot(url);
@@ -76,6 +84,7 @@ function startSession(tabId, url) {
 // Function to take a screenshot with error handling
 function takeScreenshot(url) {
   const now = Date.now();
+  // Avoid taking screenshots too frequently
   if (now - lastCaptureTime < 1000) {
     console.warn("Skipping screenshot to avoid exceeding rate limit.");
     return;
@@ -87,8 +96,66 @@ function takeScreenshot(url) {
       console.error("Error capturing screenshot:", chrome.runtime.lastError.message);
       return;
     }
+
     console.log(`Screenshot taken for ${url}`);
     console.log("Screenshot (base64):", dataUrl.slice(0, 100) + "...");
-    // TODO: Send the screenshot to ChatGPT API for analysis
+
+    // ------------------------------------------------
+    // 2. Send screenshot (Base64) to OpenAI for analysis
+    // ------------------------------------------------
+    analyzeScreenshotWithOpenAI(dataUrl, currentGoal);
   });
+}
+
+/**
+ * Calls the OpenAI API to analyze the screenshot in relation to the current goal.
+ * Logs the number from 1-100 representing the confidence that the user is off-task.
+ */
+function analyzeScreenshotWithOpenAI(base64Screenshot, goal) {
+  // Construct the prompt as required
+  const prompt = `
+Given to you is a screenshot of the user’s current activity on Chrome. Your job is to determine the current productiveness of the user based off of the content they are viewing, and more specifically the relevance to their stated goal in this work/study session: “${goal}”. You must be harsh, but not overly harsh. Take for example if the user’s goal is to study calculus and the screenshot shows them watching a video about F1 or texting about video games on Instagram, you may be confident in your assertion that the content on screen is unproductive and irrelevant. You must return a number from 1-100 representing the percentage of confidence you have that the user is off task. Reply with only that number and nothing else.
+`;
+
+  // Prepare request for OpenAI Chat Completion (GPT-3.5, GPT-4, etc.)
+  fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${OPENAI_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model: "gpt-4o", // or "gpt-4" if you have access
+      messages: [
+        {
+            "role": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": prompt,
+                },
+                {
+                    "type": "image_url",
+                    "image_url": {"url": base64Screenshot},
+                },
+            ],
+        }
+    ],
+      temperature: 0.0,
+      max_tokens: 10, // We only need a very short numeric answer
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.choices && data.choices.length > 0) {
+        const result = data.choices[0].message.content.trim();
+        console.log("OpenAI Off-Task Confidence Score:", result);
+        // Here you could do more with `result` as needed
+      } else {
+        console.error("No valid response from OpenAI:", data);
+      }
+    })
+    .catch((error) => {
+      console.error("Error calling OpenAI API:", error);
+    });
 }
