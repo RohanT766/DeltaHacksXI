@@ -23,6 +23,7 @@ let thoughtBubble = null;       // Track the thought bubble element
 
 // Function to create and display a thought bubble next to the owl
 function addThoughtBubble() {
+  console.log("addThoughtBubble called");
   if (!currentOwl) return;
   
   // Create thought bubble element with a unique id
@@ -31,7 +32,7 @@ function addThoughtBubble() {
   thoughtBubble.src = "https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExcjQ2ZHR0emV3bWkyNmV6NmVraWk5amhkb2k5bGVneWx6dzc3MnZvaiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/D3lDc9D3uBxXLShs8K/giphy.gif";
   thoughtBubble.style.position = "fixed";
   thoughtBubble.style.width = "100px"; // Adjust size as needed
-  thoughtBubble.style.zIndex = "9998";
+  thoughtBubble.style.zIndex = "10000"; // Ensure bubble is on top
 
   // Position the bubble next to the owl
   const owlRect = currentOwl.getBoundingClientRect();
@@ -43,12 +44,11 @@ function addThoughtBubble() {
 
 // Function to remove the thought bubble
 function removeThoughtBubble() {
-  // Attempt to remove by reference first
+  console.log("removeThoughtBubble called");
   if (thoughtBubble) {
     thoughtBubble.remove();
     thoughtBubble = null;
   } else {
-    // Fallback: remove by id if element still exists in DOM
     const bubble = document.getElementById("thoughtBubble");
     if (bubble) {
       bubble.remove();
