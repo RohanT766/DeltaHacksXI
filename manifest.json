@@ -5,6 +5,12 @@
   "description": "Hoot hoot! Track your goals with an animated owl.",
   "permissions": ["activeTab", "scripting"],
   "host_permissions": ["<all_urls>"],
+  "web_accessible_resources": [
+    {
+      "resources": ["images/my-gif.gif"],
+      "matches": ["<all_urls>"]
+    }
+  ],
   "action": {
     "default_popup": "popup.html"
   },

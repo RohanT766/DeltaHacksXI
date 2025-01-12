@@ -171,9 +171,62 @@ function analyzeScreenshotWithOpenAI(base64Screenshot, goal, sessionId) {
     });
 }
 
-// Function to handle off-task behavior
 function handleOffTask(tabId) {
   console.log(`Off-task behavior detected for TabId = ${tabId}`);
+
+  // Step 1: Inject a content script to display the GIF
+  chrome.scripting.executeScript(
+    {
+      target: { tabId: tabId },
+      func: showGifOverlay,
+    },
+    () => {
+      if (chrome.runtime.lastError) {
+        console.error(`Failed to inject script: ${chrome.runtime.lastError.message}`);
+        performTabAction(tabId); // Fallback if injection fails
+      } else {
+        // Step 2: Delay the tab action
+        setTimeout(() => performTabAction(tabId), 3000); // Delay for 3 seconds
+      }
+    }
+  );
+}
+
+// Function to display the GIF overlay
+function showGifOverlay() {
+  const gifUrl = chrome.runtime.getURL("animateWing1.gif"); // Replace with your GIF URL
+
+  // Create an overlay element
+  const overlay = document.createElement("div");
+  overlay.style.position = "fixed";
+  overlay.style.top = "0";
+  overlay.style.left = "0";
+  overlay.style.width = "100%";
+  overlay.style.height = "100%";
+  overlay.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
+  overlay.style.zIndex = "9999";
+  overlay.style.display = "flex";
+  overlay.style.alignItems = "center";
+  overlay.style.justifyContent = "center";
+
+  // Create the GIF element
+  const gif = document.createElement("img");
+  gif.src = gifUrl;
+  gif.style.maxWidth = "80%";
+  gif.style.maxHeight = "80%";
+  overlay.appendChild(gif);
+
+  // Add the overlay to the body
+  document.body.appendChild(overlay);
+
+  // Remove the overlay after 3 seconds
+  setTimeout(() => {
+    overlay.remove();
+  }, 3000);
+}
+
+// Function to perform the tab action (close or redirect)
+function performTabAction(tabId) {
   if (tabHistory[tabId] && tabHistory[tabId].length > 1) {
     // Redirect to the last meaningful page
     const previousUrl = tabHistory[tabId][tabHistory[tabId].length - 2];
