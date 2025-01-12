@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   const goalContainer = document.getElementById("goalContainer");
+  let finalOwlPosition = null; // To store the final position and size of the flying owl
 
   // Fetch the current tracking state
   chrome.runtime.sendMessage({ type: "getTrackingState" }, (response) => {
@@ -79,12 +80,21 @@ document.addEventListener("DOMContentLoaded", () => {
     flyingOwl.getBoundingClientRect();
 
     // Animate to the top-right corner
-    flyingOwl.style.transform = "translate(200px, -200px) scale(0.8)";
+    flyingOwl.style.transform = "translate(300px, -250px) scale(0.8)";
     flyingOwl.style.opacity = "0.7";
 
-    // Remove the flying owl after the animation ends
+    // Listen for transition end to remove the flying owl and save final position
     flyingOwl.addEventListener("transitionend", () => {
-      document.body.removeChild(flyingOwl);
+      // Save the final position and size
+      const finalRect = flyingOwl.getBoundingClientRect();
+      finalOwlPosition = {
+        left: finalRect.left,
+        top: finalRect.top,
+        width: finalRect.width,
+        height: finalRect.height,
+      };
+
+      document.body.removeChild(flyingOwl); // Remove the flying owl
     });
   }
 
@@ -115,4 +125,23 @@ document.addEventListener("DOMContentLoaded", () => {
     statusMessage.textContent = message;
     statusMessage.style.color = color;
   }
+
+  // Add an owl at the saved position when the popup closes
+  document.body.onblur = () => {
+    if (!finalOwlPosition) return; // Only proceed if there's a saved position
+
+    const persistentOwl = document.createElement("img");
+    persistentOwl.src = "https://media.giphy.com/media/5BTz4HSGbL7l6su75e/giphy.gif";
+    persistentOwl.className = "owl-fly"; // Use the same class for styling
+
+    // Set the saved position and size
+    persistentOwl.style.position = "absolute";
+    persistentOwl.style.left = finalOwlPosition.left + "px";
+    persistentOwl.style.top = finalOwlPosition.top + "px";
+    persistentOwl.style.width = finalOwlPosition.width + "px";
+    persistentOwl.style.height = finalOwlPosition.height + "px";
+
+    // Append the persistent owl to the body
+    document.body.appendChild(persistentOwl);
+  };
 });
