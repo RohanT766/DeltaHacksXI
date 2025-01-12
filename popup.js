@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
         type="text" 
         id="goalInput" 
         class="owl-input" 
-        placeholder="e.g. Finishing Calc 1 homework, learn how to edit a video on iMovie..."
+        placeholder="e.g. Finishing Calc 1 homework, edit a video on iMovie..."
       />
       <button id="startBtn" class="owl-button">Start Tracking</button>
       <p id="statusMessage" class="owl-status"></p>
