@@ -16,7 +16,7 @@ function animateOwlIntoScreen() {
   
     // Trigger the owl flying in
     setTimeout(() => {
-        flyingOwl.style.top = "20px"; // Final position inside the screen vertically
+        flyingOwl.style.top = "40px"; // Final position inside the screen vertically
         flyingOwl.style.right = "20px"; // Final position inside the screen horizontally
     }, 1500); // Slight delay to ensure proper rendering
   
