@@ -13,13 +13,19 @@ document.addEventListener("DOMContentLoaded", () => {
   // Display the goal input field
   function displayGoalInput() {
     goalContainer.innerHTML = `
-      <h1 class="owl-title">Owl's Honor!</h1>
-      <p class="owl-paragraph">“Hoot hoot! Enter your wise goal below.”</p>
+      <h1 class="owl-title">Owl's Wisdom</h1>
+      <p class="owl-paragraph">“Hoot hoot! Focus on your next wise goal…”</p>
+      <!-- Here's the new GIF element -->
+      <img 
+        class="owl-gif"
+        src="https://media.giphy.com/media/5BTz4HSGbL7l6su75e/giphy.gif"
+        alt="Cute Owls Hugging"
+      />
       <input 
         type="text" 
         id="goalInput" 
         class="owl-input" 
-        placeholder="e.g. finishing calc 1 homework, edit a video..."
+        placeholder="Enter your wise plan here..."
       />
       <button id="startBtn" class="owl-button">Start Tracking</button>
       <p id="statusMessage" class="owl-status"></p>
@@ -37,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
           displayActiveGoal(response.goal);
           console.log(`Goal set: "${goalInput}". Tracking started.`);
         } else {
-          updateStatusMessage("Uh-oh! We couldn’t start tracking.", "red");
+          updateStatusMessage("Uh-oh! Couldn’t start tracking.", "red");
         }
       });
     });
@@ -46,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Display the active goal
   function displayActiveGoal(goal) {
     goalContainer.innerHTML = `
-      <h1 class="owl-title">Currently Perched Goal</h1>
+      <h1 class="owl-title">Current Perched Goal</h1>
       <p class="owl-paragraph">${goal}</p>
       <button id="stopBtn" class="owl-button">Stop Tracking</button>
       <p id="statusMessage" class="owl-status"></p>
@@ -68,7 +74,6 @@ document.addEventListener("DOMContentLoaded", () => {
   function updateStatusMessage(message, color) {
     const statusMessage = document.getElementById("statusMessage");
     statusMessage.textContent = message;
-    // We still handle dynamic color in JS
     statusMessage.style.color = color;
   }
 });
