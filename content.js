@@ -7,7 +7,7 @@ function animateOwlIntoScreen() {
     flyingOwl.style.top = "0px"; // Start completely off-screen at the top
     flyingOwl.style.right = "-200px"; // Start completely off-screen on the right
     flyingOwl.style.transform = "translate(0, 0)"; // No centering required here
-    flyingOwl.style.width = "300px"; // Owl size
+    flyingOwl.style.width = "150px"; // Owl size
     flyingOwl.style.zIndex = "9999"; // Ensure it appears above all content
     flyingOwl.style.transition = "top 1.5s ease-out, right 1.5s ease-out"; // Smooth flying animation
   
