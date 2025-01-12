@@ -188,7 +188,9 @@ function analyzeScreenshotWithOpenAI(base64Screenshot, goal, sessionId) {
 
         if (offTaskScore > 70) {
           handleOffTask(currentSession.tabId);
-        }
+        } else if (offTaskScore >= 30) {
+          showBlurOverlay(currentSession.tabId, goal, base64Screenshot);
+        }        
       } else {
         console.error("No valid score returned from server:", data);
       }
@@ -251,4 +253,120 @@ function injectGif(gifSrc) {
   img.style.pointerEvents = 'none';
   img.style.opacity = '1';
   body.appendChild(img);
+}
+
+function showBlurOverlay(tabId, goal, base64Screenshot) {
+  console.log(`Intermediate off-task behavior detected for TabId = ${tabId}`);
+
+  // Inject the overlay
+  chrome.scripting.executeScript({
+    target: { tabId: tabId },
+    func: injectBlurOverlay,
+  });
+
+  // Add listener to handle user's response
+  chrome.runtime.onMessage.addListener(function handleOverlayResponse(message, sender, sendResponse) {
+    if (message.type === "overlayResponse" && sender.tab.id === tabId) {
+      chrome.runtime.onMessage.removeListener(handleOverlayResponse);
+
+      const userResponse = message.response;
+
+      fetch("http://localhost:8080/validate_reason", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          base64Screenshot: base64Screenshot,
+          goal: goal,
+          reason: userResponse,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("User response validation result:", String(data).toUpperCase());
+          if (String(data).toUpperCase() == "PASS") {
+            console.log("User response validated. Removing overlay.");
+            chrome.scripting.executeScript({
+              target: { tabId: tabId },
+              func: removeBlurOverlay,
+            });
+          } else {
+            console.log("User response failed validation. Triggering handleOffTask.");
+            handleOffTask(tabId);
+          }
+        })
+        .catch((error) => {
+          console.error("Error validating user response:", error);
+          handleOffTask(tabId);
+        });
+    }
+  });
+}
+
+// Injects the blurred overlay with a text box
+function injectBlurOverlay() {
+  const body = document.body;
+
+  // Create overlay
+  const overlay = document.createElement('div');
+  overlay.id = 'blur-overlay';
+  overlay.style.position = 'fixed';
+  overlay.style.top = '0';
+  overlay.style.left = '0';
+  overlay.style.width = '100%';
+  overlay.style.height = '100%';
+  overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+  overlay.style.backdropFilter = 'blur(10px)';
+  overlay.style.zIndex = '9999999';
+  overlay.style.display = 'flex';
+  overlay.style.flexDirection = 'column';
+  overlay.style.alignItems = 'center';
+  overlay.style.justifyContent = 'center';
+  overlay.style.color = 'white';
+  overlay.style.fontSize = '18px';
+  overlay.style.textAlign = 'center';
+
+  // Add prompt
+  const prompt = document.createElement('p');
+  prompt.textContent = 'Why do you need to access this page?';
+
+  // Add text box
+  const input = document.createElement('textarea');
+  input.style.width = '80%';
+  input.style.height = '100px';
+  input.style.marginTop = '20px';
+  input.style.fontSize = '16px';
+  input.style.padding = '10px';
+
+  // Add submit button
+  const button = document.createElement('button');
+  button.textContent = 'Submit';
+  button.style.marginTop = '20px';
+  button.style.padding = '10px 20px';
+  button.style.fontSize = '16px';
+  button.style.cursor = 'pointer';
+
+  // Append elements
+  overlay.appendChild(prompt);
+  overlay.appendChild(input);
+  overlay.appendChild(button);
+  body.appendChild(overlay);
+
+  // Add event listener to submit button
+  button.addEventListener('click', () => {
+    const userResponse = input.value.trim();
+    if (userResponse) {
+      chrome.runtime.sendMessage({ type: "overlayResponse", response: userResponse });
+      body.removeChild(overlay);
+    }
+  });
+}
+
+// Removes the blurred overlay
+function removeBlurOverlay() {
+  const overlay = document.getElementById('blur-overlay');
+  if (overlay) {
+    overlay.remove();
+  }
 }
