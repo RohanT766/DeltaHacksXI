@@ -4,6 +4,7 @@ let currentSession = null; // Tracks the current session
 let lastCaptureTime = 0;   // Tracks the last time a screenshot was taken
 let isTracking = false;    // Tracks whether goal tracking is active
 let currentGoal = "";      // Stores the active goal
+let tabHistory = {};       // Keeps track of tab history to handle redirection
 
 // Start or stop tracking
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -26,6 +27,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (isTracking && changeInfo.status === "complete" && tab.url) {
     console.log(`Page changed: ${tab.url}`);
+    updateTabHistory(tabId, tab.url);
     startSession(tabId, tab.url);
   }
 });
@@ -34,6 +36,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 chrome.tabs.onCreated.addListener((tab) => {
   if (isTracking) {
     console.log(`New tab opened: ${tab.id}, URL = ${tab.url || "about:blank"}`);
+    updateTabHistory(tab.id, tab.url || "about:blank");
     startSession(tab.id, tab.url || "about:blank");
   }
 });
@@ -43,10 +46,30 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
   if (isTracking) {
     chrome.tabs.get(activeInfo.tabId, (tab) => {
       console.log(`Switched to tab: TabId = ${activeInfo.tabId}, URL = ${tab.url}`);
+      updateTabHistory(activeInfo.tabId, tab.url);
       startSession(activeInfo.tabId, tab.url);
     });
   }
 });
+
+// Function to update tab history
+function updateTabHistory(tabId, url) {
+  if (!url || url.startsWith("chrome://") || url.startsWith("about:")) {
+    // Ignore restricted or blank URLs
+    return;
+  }
+
+  if (!tabHistory[tabId]) {
+    tabHistory[tabId] = [];
+  }
+
+  // Only add the URL if it differs from the last recorded URL
+  const history = tabHistory[tabId];
+  if (history.length === 0 || history[history.length - 1] !== url) {
+    tabHistory[tabId].push(url);
+    console.log(`Updated history for TabId = ${tabId}:`, tabHistory[tabId]);
+  }
+}
 
 // Function to start a new session
 function startSession(tabId, url) {
@@ -126,14 +149,19 @@ function analyzeScreenshotWithOpenAI(base64Screenshot, goal, sessionId) {
   })
     .then((response) => response.json())
     .then((data) => {
-      // Check if the session is still valid before logging the result
+      // Check if the session is still valid before processing the result
       if (!currentSession || currentSession.sessionId !== sessionId) {
         console.log("Session ended or replaced after API response. Disregarding result.");
         return;
       }
 
       if (data) {
-        console.log("OpenAI Off-Task Confidence Score:", data);
+        const offTaskScore = parseInt(data, 10);
+        console.log("OpenAI Off-Task Confidence Score:", offTaskScore);
+
+        if (offTaskScore > 70) {
+          handleOffTask(currentSession.tabId);
+        }
       } else {
         console.error("No valid score returned from server:", data);
       }
@@ -141,4 +169,19 @@ function analyzeScreenshotWithOpenAI(base64Screenshot, goal, sessionId) {
     .catch((error) => {
       console.error("Error calling Python API:", error);
     });
+}
+
+// Function to handle off-task behavior
+function handleOffTask(tabId) {
+  console.log(`Off-task behavior detected for TabId = ${tabId}`);
+  if (tabHistory[tabId] && tabHistory[tabId].length > 1) {
+    // Redirect to the last meaningful page
+    const previousUrl = tabHistory[tabId][tabHistory[tabId].length - 2];
+    console.log(`Redirecting to previous page: ${previousUrl}`);
+    chrome.tabs.update(tabId, { url: previousUrl });
+  } else {
+    // Close the tab if it's a new tab
+    console.log(`Closing new tab: TabId = ${tabId}`);
+    chrome.tabs.remove(tabId);
+  }
 }
