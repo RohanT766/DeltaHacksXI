@@ -52,6 +52,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
           // Then animate the flying owl
           animateFlyingOwl(rect);
+
+          // **Send a message to trigger animation in the active tab**
+          chrome.runtime.sendMessage({ type: "animateOwlInTab" }, (res) => {
+            if (!res.success) {
+              console.error("Failed to animate owl in tab.");
+            }
+          });
         } else {
           updateStatusMessage("Uh-oh! We couldn’t start tracking.", "red");
         }
