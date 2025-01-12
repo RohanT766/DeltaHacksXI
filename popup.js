@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Display the goal input field
   function displayGoalInput() {
     goalContainer.innerHTML = `
-      <h1 class="owl-title">Owl's Honor!</h1>
+      <h1 class="owl-title">No Hooting Around</h1>
       <p class="owl-paragraph">Hoot hoot! Enter your wise goal below:</p>
 
       <!-- Main Owl GIF -->
