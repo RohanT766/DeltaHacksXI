@@ -1,124 +1,109 @@
-/* Optional: load Poppins (the "owl" font) */
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
-
-/* Reset / baseline */
+/* Basic reset */
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-/* Body of the popup */
-body {
-  width: 320px; 
-  min-height: 280px;
-  font-family: "Poppins", sans-serif; 
-
-  /* "Frosted glass" effect */
-  background-color: rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-
-  border-radius: 10px;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
-
-/* Container for goal content */
-#goalContainer {
-  margin: 16px;
-  padding: 20px;
-  background-color: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-
-  box-shadow:
-    inset 0 1px 2px rgba(255, 255, 255, 0.2),
-    0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* Title styling */
-.owl-title {
-  margin-bottom: 10px;
-  font-size: 1.2rem;
-  color: #333;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
-}
-
-/* Paragraph / text styling */
-.owl-paragraph {
-  margin-bottom: 10px;
-  font-size: 0.95rem;
-  color: #555;
-}
-
-/* The new GIF style */
-.owl-gif {
-  display: block;
-  width: 80%;          /* or any desired width */
-  margin: 0 auto 10px; /* center the GIF, add spacing below */
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-}
-
-/* Input field styling */
-.owl-input {
-  display: block;
-  width: 100%;
-  margin-bottom: 10px;
-  padding: 10px;
-  font-size: 0.9rem;
-  background-color: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 6px;
-  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.05);
-}
-
-/* Button styling */
-.owl-button {
-  padding: 10px 16px;
-  margin-right: 8px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.65),
-    rgba(255, 255, 255, 0.4)
-  );
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 6px;
-  box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
-
-  color: #333;
-  font-weight: 600;
-  transition: box-shadow 0.2s, transform 0.2s;
-}
-
-.owl-button:hover {
-  box-shadow:
-    0 2px 6px rgba(0, 0, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4);
-  transform: translateY(-2px);
-}
-
-.owl-button:active {
-  transform: translateY(1px);
-  box-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.2),
-    inset 0 1px 1px rgba(255, 255, 255, 0.5);
-}
-
-/* Status message styling */
-.owl-status {
-  margin-top: 10px;
-  font-size: 0.9rem;
-  font-weight: bold;
-  color: #444;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
-}
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Body of the popup */
+  body {
+    width: 320px; 
+    min-height: 280px;
+    font-family: "Poppins", "Segoe UI", Tahoma, sans-serif; /* Owl-friendly modern font */
+    background: linear-gradient(160deg, #1e1e2f, #2b2b44);
+    border-radius: 10px;
+    overflow: hidden;
+    border: 2px solid #4d3a7d; /* purple border */
+  }
+  
+  /* Container for all goal content */
+  #goalContainer {
+    margin: 16px;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.07);
+    border-radius: 10px;
+    box-shadow: 
+      inset 0 2px 4px rgba(255, 255, 255, 0.1),
+      0 4px 8px rgba(0, 0, 0, 0.3);
+    border: 1px solid #6f5ea6;
+  }
+  
+  /* Title text */
+  .owl-title {
+    margin-bottom: 10px;
+    font-size: 1.25rem;
+    color: #e6e6ff;
+    text-shadow: 1px 1px #6f5ea6;
+  }
+  
+  /* Paragraph or descriptive text */
+  .owl-paragraph {
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+    color: #d9d9ff;
+  }
+  
+  /* The GIF styling */
+  .owl-gif {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto 15px; /* center the image and add bottom spacing */
+    border-radius: 8px;  /* optional rounding */
+  }
+  
+  /* Owl-themed input */
+  .owl-input {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px;
+    font-size: 0.9rem;
+    border: 2px solid #6f5ea6;
+    border-radius: 6px;
+    background-color: #fcfcfe;
+    box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Owl-themed button */
+  .owl-button {
+    padding: 10px 16px;
+    margin-right: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: 2px solid #6f5ea6;
+    border-radius: 6px;
+    background: linear-gradient(to bottom, #a288ff, #6f5ea6);
+    color: #fff;
+    font-weight: bold;
+    text-shadow: 1px 1px #52448c;
+    box-shadow:
+      0 1px 0 #c2b8ff inset,
+      0 3px 5px rgba(0, 0, 0, 0.25);
+    transition: transform 0.1s, box-shadow 0.1s;
+  }
+  
+  .owl-button:hover {
+    background: linear-gradient(to bottom, #b2a0ff, #7a69c0);
+    transform: scale(1.03);
+    box-shadow:
+      0 1px 0 #d4ccff inset,
+      0 4px 6px rgba(0, 0, 0, 0.3);
+  }
+  
+  .owl-button:active {
+    transform: translateY(2px);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.3) inset,
+      0 2px 3px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Status message */
+  .owl-status {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #d9d9ff;
+    text-shadow: 1px 1px #52448c;
+  }
+  
