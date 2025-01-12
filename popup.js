@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
     flyingOwl.getBoundingClientRect();
 
     // Animate straight up
-    flyingOwl.style.transform = "translateY(-200px)"; // Move up 200px
+    flyingOwl.style.transform = "translateY(-300px)"; // Move up 200px
     flyingOwl.style.opacity = "0.7";
 
     // Listen for transition end to remove the flying owl and save final position
