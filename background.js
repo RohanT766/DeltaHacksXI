@@ -29,6 +29,15 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     console.log(`Page changed: ${tab.url}`);
     updateTabHistory(tabId, tab.url);
     startSession(tabId, tab.url);
+
+    // Trigger owl animation on new page load
+    chrome.tabs.sendMessage(tabId, { action: "flyOwl" }, (response) => {
+      if (chrome.runtime.lastError) {
+        console.error("Error sending flyOwl message:", chrome.runtime.lastError);
+      } else {
+        console.log(response?.status || "Owl message sent");
+      }
+    });
   }
 });
 
@@ -38,6 +47,15 @@ chrome.tabs.onCreated.addListener((tab) => {
     console.log(`New tab opened: ${tab.id}, URL = ${tab.url || "about:blank"}`);
     updateTabHistory(tab.id, tab.url || "about:blank");
     startSession(tab.id, tab.url || "about:blank");
+
+    // Trigger owl animation on new tab
+    chrome.tabs.sendMessage(tab.id, { action: "flyOwl" }, (response) => {
+      if (chrome.runtime.lastError) {
+        console.error("Error sending flyOwl message:", chrome.runtime.lastError);
+      } else {
+        console.log(response?.status || "Owl message sent");
+      }
+    });
   }
 });
 
@@ -48,6 +66,15 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
       console.log(`Switched to tab: TabId = ${activeInfo.tabId}, URL = ${tab.url}`);
       updateTabHistory(activeInfo.tabId, tab.url);
       startSession(activeInfo.tabId, tab.url);
+
+      // Trigger owl animation on tab switch
+      chrome.tabs.sendMessage(activeInfo.tabId, { action: "flyOwl" }, (response) => {
+        if (chrome.runtime.lastError) {
+          console.error("Error sending flyOwl message:", chrome.runtime.lastError);
+        } else {
+          console.log(response?.status || "Owl message sent");
+        }
+      });
     });
   }
 });
@@ -82,7 +109,7 @@ function startSession(tabId, url) {
   }
 
   // Start a new session
-  currentSession = { tabId, url, sessionId: Date.now() }; // Add sessionId to track session validity
+  currentSession = { tabId, url, sessionId: Date.now() };
   console.log(`Starting new session for TabId = ${tabId}, URL = ${url}`);
 
   // Take a screenshot after a 2-second delay
@@ -191,8 +218,7 @@ function handleOffTask(tabId) {
     // Wait for a few seconds before redirecting to give time for GIF to show
     setTimeout(() => {
       chrome.tabs.update(tabId, { url: previousUrl });
-    }, 2000); // Adjust delay as needed (2 seconds here)
-
+    }, 2000); // Adjust delay as needed
   } else {
     // If the tab is new, show the GIF before closing the tab
     console.log(`Closing new tab: TabId = ${tabId}`);
@@ -206,9 +232,8 @@ function handleOffTask(tabId) {
 
     // Delay tab closure to allow the first GIF to be visible
     setTimeout(() => {
-      // Close the tab
       chrome.tabs.remove(tabId);
-    }, 2000); // Adjust delay as needed (2 seconds here)
+    }, 2000); // Adjust delay as needed
   }
 }
 
@@ -222,9 +247,8 @@ function injectGif(gifSrc) {
   img.style.left = '0';
   img.style.width = '100%';
   img.style.height = '100%';
-  img.style.zIndex = '9999999'; // On top of other content
-  img.style.pointerEvents = 'none'; // Make sure it doesn't block interactions
-  img.style.opacity = '1'; // Semi-transparent overlay
+  img.style.zIndex = '9999999';
+  img.style.pointerEvents = 'none';
+  img.style.opacity = '1';
   body.appendChild(img);
 }
-

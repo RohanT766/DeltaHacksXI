@@ -53,7 +53,7 @@ function animateOwlIntoScreen() {
   }, 1200);
 }
 
-// Listen for messages from popup.js
+// Listen for messages from popup.js or background.js
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "flyOwl") {
     animateOwlIntoScreen();
