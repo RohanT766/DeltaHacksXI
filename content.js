@@ -1,6 +1,6 @@
 // Single GIF URL to be used throughout the bobbing phase
 const OWL_GIF_URL = "https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExNXJoaWxpc2JhM2Z5N3plN2VvcDVrbm41bDdib2Fwam9odHdlc2hmdCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/MwprkGiTxoeUM17RDp/giphy.gif";
-// GIF URL for the owl during its initial flight
+// GIF URL for the owl during its initial flight and for flying away
 const FLYING_OWL_GIF_URL = "https://media.giphy.com/media/5BTz4HSGbL7l6su75e/giphy.gif";
 
 let currentOwl = null; // Track the current owl element on screen
@@ -53,10 +53,13 @@ function animateOwlIntoScreen() {
   }, 1200);
 }
 
-// Function to animate the owl flying away to the right and disappearing
+// Function to animate the owl flying away to the right and disappearing with a flying GIF
 function animateOwlAway() {
   if (!currentOwl) return;
 
+  // Switch to the flying GIF for a dynamic fly-away effect
+  currentOwl.src = FLYING_OWL_GIF_URL;
+  
   currentOwl.style.animation = "";
   currentOwl.style.transition = "right 1.5s ease-in, opacity 1.5s ease-in";
   currentOwl.style.right = "-300px";
