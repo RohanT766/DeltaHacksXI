@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Animate an owl in the active goal screen
+  // Animate an owl to fly straight up out of the screen
   function animateFlyingOwl(rect) {
     // Create a flying owl duplicate
     const flyingOwl = document.createElement("img");
@@ -79,9 +79,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // Force reflow to apply initial position
     flyingOwl.getBoundingClientRect();
 
-    // Animate straight up
-    flyingOwl.style.transform = "translateY(-200px)"; // Move up 200px
-    flyingOwl.style.opacity = "0.7";
+    // Animate directly upward out of the screen
+    flyingOwl.style.transform = `translateY(-${window.innerHeight}px)`; // Moves up by the height of the viewport
+    flyingOwl.style.opacity = "0"; // Gradually fades out
 
     // Listen for transition end to remove the flying owl and save final position
     flyingOwl.addEventListener("transitionend", () => {
