@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Owl Tracker",
+  "name": "Stop Hootin' Around",
   "version": "1.0",
   "description": "Hoot hoot! Track your goals with an animated owl.",
   "permissions": ["activeTab", "scripting"],

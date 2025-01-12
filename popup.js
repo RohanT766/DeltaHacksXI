@@ -14,8 +14,8 @@ document.addEventListener("DOMContentLoaded", () => {
   // Display the goal input field
   function displayGoalInput() {
     goalContainer.innerHTML = `
-      <h1 class="owl-title">Owl's Honor!</h1>
-      <p class="owl-paragraph">Hoot hoot! Enter your wise goal below:</p>
+      <h1 class="owl-title">Stop Hootin' Around</h1>
+      <p class="owl-paragraph">Hoot hoot! Enter your goal below:</p>
 
       <!-- Main Owl GIF -->
       <img 
@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("startBtn").addEventListener("click", () => {
       const goalInput = document.getElementById("goalInput").value.trim();
       if (goalInput === "") {
-        updateStatusMessage("Please enter a valid goal, wise owl!", "red");
+        updateStatusMessage("Please enter a valid goal!", "red");
         return;
       }
 
@@ -104,7 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Display the active goal
   function displayActiveGoal(goal) {
     goalContainer.innerHTML = `
-      <h1 class="owl-title">Currently Perched Goal</h1>
+      <h1 class="owl-title">Currently Tracking Goal</h1>
       <p class="owl-paragraph">${goal}</p>
       <button id="stopBtn" class="owl-button">Stop Tracking</button>
       <p id="statusMessage" class="owl-status"></p>
