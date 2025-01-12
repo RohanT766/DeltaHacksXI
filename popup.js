@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Animate an owl in the active goal screen
+  // Animate an owl to fly straight up out of the screen
   function animateFlyingOwl(rect) {
     // Create a flying owl duplicate
     const flyingOwl = document.createElement("img");
@@ -82,9 +82,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // Force reflow to apply initial position
     flyingOwl.getBoundingClientRect();
 
-    // Animate straight up
-    flyingOwl.style.transform = "translateY(-300px)"; // Move up 200px
-    flyingOwl.style.opacity = "0.7";
+    // Animate directly upward out of the screen
+    flyingOwl.style.transform = `translateY(-${window.innerHeight}px)`; // Moves up by the height of the viewport
+    flyingOwl.style.opacity = "0"; // Gradually fades out
 
     // Listen for transition end to remove the flying owl and save final position
     flyingOwl.addEventListener("transitionend", () => {
@@ -146,5 +146,22 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Add an owl at the saved position when the popup loses focus (user clicks off)
+  document.body.addEventListener("blur", () => {
+    if (!finalOwlPosition) return; // Only proceed if there's a saved position
 
+    const persistentOwl = document.createElement("img");
+    persistentOwl.src = "https://media.giphy.com/media/5BTz4HSGbL7l6su75e/giphy.gif";
+    persistentOwl.className = "owl-fly"; // Use the same class for styling
+
+    // Set the saved position and size
+    persistentOwl.style.position = "absolute";
+    persistentOwl.style.left = finalOwlPosition.left + "px";
+    persistentOwl.style.top = finalOwlPosition.top + "px";
+    persistentOwl.style.width = finalOwlPosition.width + "px";
+    persistentOwl.style.height = finalOwlPosition.height + "px";
+
+    // Append the persistent owl to the body
+    document.body.appendChild(persistentOwl);
+  });
 });
