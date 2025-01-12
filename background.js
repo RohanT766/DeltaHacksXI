@@ -106,6 +106,8 @@ function takeScreenshot(url) {
     analyzeScreenshotWithOpenAI(dataUrl, currentGoal);
   });
 }
+
+
 /**
  * Calls the OpenAI API to analyze the screenshot in relation to the current goal.
  * Logs the number from 1-100 representing the confidence that the user is off-task.
