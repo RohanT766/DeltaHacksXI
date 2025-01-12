@@ -1,0 +1,63 @@
+import os
+from openai import OpenAI
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+
+app = Flask(__name__)
+CORS(app)
+
+# Replace with your own method of securely loading the API key
+client = OpenAI(
+    api_key=os.environ.get("OPENAI_API_KEY"),  # This is the default and can be omitted
+)
+
+@app.route("/analyze_screenshot", methods=["POST"])
+def analyze_screenshot():
+    """
+    Expects JSON data with keys: 'base64Screenshot' and 'goal'.
+    Returns JSON with the off-task confidence score from OpenAI.
+    """
+    data = request.get_json(force=True)
+    base64_screenshot = data.get("base64Screenshot", "")
+    goal = data.get("goal", "")
+
+    # Construct the prompt
+    prompt = f"Given to you is a screenshot of the user’s current activity on Chrome. Your job is to determine the current productiveness of the user based off of the content they are viewing, and more specifically the relevance to their stated goal in this work/study session: “{goal}”. You must be harsh, but not overly harsh. Take for example if the user’s goal is to study calculus and the screenshot shows them watching a video about F1 or texting about video games on Instagram, you may be confident in your assertion that the content on screen is unproductive and irrelevant. If the contents of the webpage are vaguely related to the user's goal, then you may exercise a lesser but not low level of confidence. You must return a number from 1-100 representing the percentage of confidence you have that the user is off task. Reply with only that number and nothing else.".strip()
+
+    try:
+        # Call OpenAI's ChatCompletion API
+        response = client.chat.completions.create(
+            model="gpt-4o",  # or "gpt-3.5-turbo", depending on availability
+            messages= [
+        {
+            "role": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": prompt,
+                },
+                {
+                    "type": "image_url",
+                    "image_url": {"url": base64_screenshot},
+                },
+            ],
+        }
+    ],
+            temperature=0.0,
+            max_tokens=10  # We only need a short numeric answer
+        )
+
+        # Extract the response text
+        if response.choices and len(response.choices) > 0:
+            result = response.choices[0].message.content.strip()
+        else:
+            return jsonify({"error": "No valid response from OpenAI"}), 500
+
+        return jsonify(result)
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+if __name__ == "__main__":
+    # Run in debug mode for development
+    app.run(debug=True, host="0.0.0.0", port=8080)
