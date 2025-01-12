@@ -3,17 +3,7 @@ console.log("Background script is running!");
 let currentSession = null; // Tracks the current session
 let lastCaptureTime = 0;   // Tracks the last time a screenshot was taken
 let isTracking = false;    // Tracks whether goal tracking is active
-let currentGoal = "";      // Stores the active goal
-
-const gifUrl = "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExN2lzbzdjcGlsa2Ezb3I5YnV6YW5nYnRscWVudjQwczBybWQyZjZzeiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/5BTz4HSGbL7l6su75e/giphy.gif"; // Owl GIF url 
-// Create owl GIF
-const owl = document.createElement('img');
-owl.src = gifUrl;
-owl.style.position = 'fixed';  
-owl.style.top = '70%';         // Establish height of the GIF on the screen
-owl.style.zIndex = '9999';     // Overlays GIF ontop of other elements on the screen
-owl.style.width = '400px';   
-owl.style.height = 'auto';     
+let currentGoal = "";      // Stores the active goal 
 
 // ----------------------------------
 // 1. Insert your OpenAI API key here
@@ -116,19 +106,6 @@ function takeScreenshot(url) {
     analyzeScreenshotWithOpenAI(dataUrl, currentGoal);
   });
 }
-function moveOwl() {
-  position += 2; // Move the GIF by 2 pixels to the right 
-  owl.style.right = position + 'px'; // Update the GIF's position
-  
-  // If the GIF moves off-screen to the right, reset it to the left side
-  if (position > window.innerWidth) {
-    position = 600; // Restart the GIF from the left edge (slightly off-screen)
-  }
-
-  // Animates the GIF smoothly
-  requestAnimationFrame(moveOwl);
-}
-
 /**
  * Calls the OpenAI API to analyze the screenshot in relation to the current goal.
  * Logs the number from 1-100 representing the confidence that the user is off-task.
@@ -155,9 +132,6 @@ Given to you is a screenshot of the user’s current activity on Chrome. Your jo
       // 'data' might look like { "score": "85" }
       if (data) {
         console.log("OpenAI Off-Task Confidence Score:", data);
-        // Add GIF to webpage
-        document.body.appendChild(owl);
-        moveOwl()
 
 let position = 600; // Set starting position 
         // do something with data.score
