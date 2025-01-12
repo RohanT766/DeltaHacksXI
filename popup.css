@@ -1,0 +1,117 @@
+/* Basic reset */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* The popup body itself. 
+     By making background: transparent and rounding corners,
+     you get "see-through" corners at the edges. */
+  body {
+    width: 340px;
+    min-height: 240px;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  
+    /* Make corners round and transparent */
+    border-radius: 12px;
+    background: transparent;
+    overflow: hidden;
+    border: none;
+  
+    /* (Optional) Some extra box-shadow around the extension popup content 
+       If you do want a more visible "3D frame" around the entire popup, 
+       uncomment these lines:
+       
+       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+       border: 2px solid #ccc; 
+    */
+  }
+  
+  /* Container for your main goal content (the "card" inside) */
+  #goalContainer {
+    margin: 16px;
+    padding: 20px;
+  
+    /* 3D look: an inset shadow plus an outer drop shadow */
+    box-shadow:
+      inset 0 2px 4px rgba(0, 0, 0, 0.1),
+      0 4px 8px rgba(0, 0, 0, 0.2);
+  
+    /* Slight gradient to simulate a "raised" card */
+    background: linear-gradient(120deg, #fcfcfc 0%, #efefef 100%);
+    border-radius: 10px;
+    border: 1px solid #ccc;
+  }
+  
+  /* Headings for your goal */
+  h1 {
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+    color: #333;
+    text-shadow: 0 1px 0 #fff; /* subtle highlight */
+  }
+  
+  /* Paragraph styling (e.g., for the current goal text) */
+  p {
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+    color: #333;
+  }
+  
+  /* Input field with a slight inset (sunken) look */
+  input[type="text"] {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 8px 10px;
+    font-size: 0.9rem;
+  
+    background: #fdfdfd;
+    border: 2px solid #ccc;
+    border-radius: 6px;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Buttons with a beveled, 3D look */
+  button {
+    padding: 8px 14px;
+    margin-right: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+  
+    /* subtle gradient to mimic old-school button shading */
+    background: linear-gradient(to bottom, #eaeaea, #cccccc);
+    border: 2px solid #bbb;
+    border-radius: 6px;
+  
+    box-shadow:
+      0 1px 0 #fff inset,        /* highlight at top inside */
+      0 2px 3px rgba(0, 0, 0, 0.2); /* outer drop shadow */
+  
+    color: #333;
+    text-shadow: 0 1px 0 #fff; /* slight text highlight */
+  }
+  
+  /* Button hover effect: adjust gradient to look slightly darker */
+  button:hover {
+    background: linear-gradient(to bottom, #f0f0f0, #c0c0c0);
+  }
+  
+  /* Button pressed/active state: "push" it down a bit */
+  button:active {
+    background: linear-gradient(to bottom, #c0c0c0, #f0f0f0);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.3) inset, /* deeper inset shadow */
+      0 1px 1px rgba(0, 0, 0, 0.2);       /* smaller outer shadow */
+    transform: translateY(1px);
+  }
+  
+  /* Status message styling */
+  #statusMessage {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    text-shadow: 0 1px 0 #fff;
+  }
+  
