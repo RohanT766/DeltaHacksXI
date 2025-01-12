@@ -126,4 +126,5 @@
     transition: transform 1.5s ease-in-out, opacity 1.5s ease-in-out;
     pointer-events: none; /* Allow clicks through the flying owl */
   }
+
   
