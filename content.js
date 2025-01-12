@@ -19,7 +19,7 @@ function animateOwlOnPage() {
     setTimeout(() => {
       flyingOwl.style.transform = `translate(-50%, -200%)`; // Moves upward out of the screen
       flyingOwl.style.opacity = "0"; // Fades out
-    }, 1000); // Delay to ensure the initial render completes
+    }, 100); // Delay to ensure the initial render completes
   
     // Remove the owl after the animation
     flyingOwl.addEventListener("transitionend", () => {
