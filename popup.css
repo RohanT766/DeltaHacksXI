@@ -7,64 +7,63 @@
   
   /* Body of the popup */
   body {
-    width: 450px; /* Increased width */
-    min-height: 500px; /* Increased height */
+    width: 400px; /* Increased width from 320px to 400px */
+    min-height: 400px; /* Increased height from 300px to 400px */
     font-family: "Poppins", "Segoe UI", Tahoma, sans-serif;
     background: linear-gradient(160deg, #f3f1e6 0%, #e9e7dc 100%);
-    border-radius: 15px;
+    border-radius: 15px; /* Increased border radius for a softer look */
     overflow: hidden;
     border: 2px solid #d5cbb2;
-    position: relative; /* To position flying owl within the popup */
+    position: relative; /* To position flying owl relative to popup */
   }
   
-  /* Content container */
+  /* Container for the goal content */
   #goalContainer {
-    margin: 20px;
-    padding: 25px;
+    margin: 20px; /* Increased margin */
+    padding: 25px; /* Increased padding */
     background-color: rgba(255, 255, 255, 0.85);
-    border-radius: 15px;
+    border-radius: 15px; /* Increased border radius */
     box-shadow:
       inset 0 2px 4px rgba(0, 0, 0, 0.06),
       0 4px 8px rgba(0, 0, 0, 0.2);
     border: 1px solid #d5cbb2;
+    position: relative; /* To assist with owl positioning */
   }
   
-  /* Title */
+  /* Title text */
   .owl-title {
-    margin-bottom: 15px;
-    font-size: 1.8rem; /* Larger title */
+    margin-bottom: 15px; /* Increased margin */
+    font-size: 1.5rem; /* Increased font size */
     color: #5c5340;
     text-shadow: 1px 1px #faf9f2;
-    text-align: center;
   }
   
-  /* Paragraph */
+  /* Paragraph text */
   .owl-paragraph {
-    margin-bottom: 20px;
-    font-size: 1.2rem; /* Larger text */
+    margin-bottom: 15px; /* Increased margin */
+    font-size: 1rem; /* Increased font size */
     color: #5c5340;
-    text-align: center;
   }
   
-  /* Owl GIF */
+  /* The main owl GIF */
   .owl-gif {
     display: block;
-    width: 300px; /* Larger width */
+    max-width: 100%;
+    width: 200px; /* Increased width from 150px to 200px */
     height: auto;
-    margin: 0 auto 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    margin: 0 auto 20px; /* Increased bottom margin */
+    border-radius: 10px; /* Increased border radius */
   }
   
   /* Input field */
   .owl-input {
     display: block;
     width: 100%;
-    margin-bottom: 15px;
-    padding: 15px; /* Larger padding */
-    font-size: 1.2rem; /* Larger font */
+    margin-bottom: 15px; /* Increased margin */
+    padding: 12px; /* Increased padding */
+    font-size: 1rem; /* Increased font size */
     border: 2px solid #cabe9b;
-    border-radius: 8px;
+    border-radius: 8px; /* Increased border radius */
     background-color: #fefefc;
     box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.06);
     color: #5c5340;
@@ -72,12 +71,12 @@
   
   /* Button */
   .owl-button {
-    padding: 15px 25px; /* Larger button */
-    margin-right: 10px;
-    font-size: 1.2rem; /* Larger font */
+    padding: 12px 20px; /* Increased padding */
+    margin-right: 10px; /* Increased margin */
+    font-size: 1rem; /* Increased font size */
     cursor: pointer;
     border: 2px solid #cabe9b;
-    border-radius: 8px;
+    border-radius: 8px; /* Increased border radius */
     background: linear-gradient(to bottom, #dfd6c3, #bba98a);
     color: #4a422e;
     font-weight: bold;
@@ -87,8 +86,6 @@
       0 3px 5px rgba(0, 0, 0, 0.25);
     transition: transform 0.1s, box-shadow 0.1s;
   }
-  
-  /* Button hover/active effects */
   .owl-button:hover {
     background: linear-gradient(to bottom, #eee6d4, #c9b79c);
     transform: scale(1.03);
@@ -103,11 +100,20 @@
       0 2px 3px rgba(0, 0, 0, 0.3);
   }
   
+  /* Status message */
+  .owl-status {
+    margin-top: 15px; /* Increased margin */
+    font-size: 1rem; /* Increased font size */
+    font-weight: bold;
+    text-shadow: 1px 1px #faf9f2;
+  }
+  
   /* Flying owl animation */
   .owl-fly {
     position: absolute;
     z-index: 9999; /* Ensure it appears above all content */
-    width: 300px; /* Match the large owl size */
+    width: 200px; /* Same size as the main owl GIF */
     transition: transform 1.5s ease-in-out, opacity 1.5s ease-in-out;
     pointer-events: none; /* Allow clicks through the flying owl */
   }
+  
