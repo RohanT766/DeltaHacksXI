@@ -49,7 +49,7 @@
   .owl-gif {
     display: block;
     max-width: 100%;
-    width: 200px; /* Increased width from 150px to 200px */
+    width: 300px; /* Increased width from 150px to 200px */
     height: auto;
     margin: 0 auto 20px; /* Increased bottom margin */
     border-radius: 10px; /* Increased border radius */
@@ -112,7 +112,7 @@
   .owl-fly {
     position: absolute;
     z-index: 9999; /* Ensure it appears above all content */
-    width: 200px; /* Same size as the main owl GIF */
+    width: 300px; /* Same size as the main owl GIF */
     transition: transform 1.5s ease-in-out, opacity 1.5s ease-in-out;
     pointer-events: none; /* Allow clicks through the flying owl */
   }
