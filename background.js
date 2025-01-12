@@ -82,15 +82,11 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
 // Function to update tab history
 function updateTabHistory(tabId, url) {
   if (!url || url.startsWith("chrome://") || url.startsWith("about:")) {
-    // Ignore restricted or blank URLs
     return;
   }
-
   if (!tabHistory[tabId]) {
     tabHistory[tabId] = [];
   }
-
-  // Only add the URL if it differs from the last recorded URL
   const history = tabHistory[tabId];
   if (history.length === 0 || history[history.length - 1] !== url) {
     tabHistory[tabId].push(url);
@@ -100,22 +96,17 @@ function updateTabHistory(tabId, url) {
 
 // Function to start a new session
 function startSession(tabId, url) {
-  endSession(); // End any ongoing session
-
-  // Ignore restricted or blank URLs
+  endSession();
   if (!url || url.startsWith("chrome://") || url.startsWith("about:")) {
     console.log(`Skipping session for restricted or blank URL: ${url}`);
     return;
   }
-
-  // Start a new session
   currentSession = { tabId, url, sessionId: Date.now() };
   console.log(`Starting new session for TabId = ${tabId}, URL = ${url}`);
 
-  // Take a screenshot after a 2-second delay
   setTimeout(() => {
     if (currentSession && currentSession.tabId === tabId) {
-      takeScreenshot(url, currentSession.sessionId); // Pass sessionId to ensure validity
+      takeScreenshot(url, currentSession.sessionId);
     } else {
       console.log("Session ended before screenshot could be taken.");
     }
@@ -133,7 +124,6 @@ function endSession() {
 // Function to take a screenshot with error handling
 function takeScreenshot(url, sessionId) {
   const now = Date.now();
-  // Avoid taking screenshots too frequently
   if (now - lastCaptureTime < 1000) {
     console.warn("Skipping screenshot to avoid exceeding rate limit.");
     return;
@@ -145,11 +135,7 @@ function takeScreenshot(url, sessionId) {
       console.error("Error capturing screenshot:", chrome.runtime.lastError.message);
       return;
     }
-
     console.log(`Screenshot taken for ${url}`);
-    console.log("Screenshot (base64):", dataUrl.slice(0, 100) + "...");
-
-    // Analyze the screenshot with OpenAI
     analyzeScreenshotWithOpenAI(dataUrl, currentGoal, sessionId);
   });
 }
@@ -158,7 +144,6 @@ function takeScreenshot(url, sessionId) {
  * Calls the OpenAI API to analyze the screenshot in relation to the current goal.
  */
 function analyzeScreenshotWithOpenAI(base64Screenshot, goal, sessionId) {
-  // Ensure the session is still valid before making the API call
   if (!currentSession || currentSession.sessionId !== sessionId) {
     console.log("Session ended or replaced. Disregarding API call.");
     return;
@@ -176,21 +161,25 @@ function analyzeScreenshotWithOpenAI(base64Screenshot, goal, sessionId) {
   })
     .then((response) => response.json())
     .then((data) => {
-      // Check if the session is still valid before processing the result
       if (!currentSession || currentSession.sessionId !== sessionId) {
         console.log("Session ended or replaced after API response. Disregarding result.");
         return;
       }
-
       if (data) {
         const offTaskScore = parseInt(data, 10);
         console.log("OpenAI Off-Task Confidence Score:", offTaskScore);
-
         if (offTaskScore > 70) {
           handleOffTask(currentSession.tabId);
-        } else if (offTaskScore >= 30) {
-          showBlurOverlay(currentSession.tabId, goal, base64Screenshot);
-        }        
+        } else {
+          // Not distracted: instruct content script to remove thought bubble
+          chrome.tabs.sendMessage(currentSession.tabId, { action: "removeThoughtBubble" }, () => {
+            if (chrome.runtime.lastError) {
+              console.error("Error sending removeThoughtBubble message:", chrome.runtime.lastError);
+            } else {
+              console.log("Thought bubble removal message sent.");
+            }
+          });
+        }
       } else {
         console.error("No valid score returned from server:", data);
       }

@@ -4,6 +4,7 @@ const OWL_GIF_URL = "https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExNXJoaWxpc2JhM2
 const FLYING_OWL_GIF_URL = "https://media.giphy.com/media/5BTz4HSGbL7l6su75e/giphy.gif";
 
 let currentOwl = null; // Track the current owl element on screen
+let thoughtBubble = null; // Track the thought bubble element
 
 // Append CSS for bobbing animation if not already present
 (function addBobbingAnimationCSS() {
@@ -20,13 +21,39 @@ let currentOwl = null; // Track the current owl element on screen
   document.head.appendChild(styleElem);
 })();
 
+// Function to create and display a thought bubble next to the owl
+function addThoughtBubble() {
+  if (!currentOwl) return;
+  // Create thought bubble element
+  thoughtBubble = document.createElement("img");
+  thoughtBubble.src = "https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExcjQ2ZHR0emV3bWkyNmV6NmVraWk5amhkb2k5bGVneWx6dzc3MnZvaiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/D3lDc9D3uBxXLShs8K/giphy.gif";
+  thoughtBubble.style.position = "fixed";
+  thoughtBubble.style.width = "100px"; // Adjust size as needed
+  thoughtBubble.style.zIndex = "9998";
+
+  // Position the bubble next to the owl
+  const owlRect = currentOwl.getBoundingClientRect();
+  thoughtBubble.style.top = `${owlRect.top - 20}px`;
+  thoughtBubble.style.left = `${owlRect.right - 200}px`;
+
+  document.body.appendChild(thoughtBubble);
+}
+
+// Function to remove the thought bubble
+function removeThoughtBubble() {
+  if (thoughtBubble) {
+    thoughtBubble.remove();
+    thoughtBubble = null;
+  }
+}
+
 // Function to make the owl fly in from the top-right corner
 function animateOwlIntoScreen() {
-  // Remove any existing owl before creating a new one
   if (currentOwl) {
     currentOwl.remove();
     currentOwl = null;
   }
+  removeThoughtBubble();
 
   currentOwl = document.createElement("img");
   currentOwl.src = FLYING_OWL_GIF_URL;
@@ -48,6 +75,7 @@ function animateOwlIntoScreen() {
         currentOwl.src = OWL_GIF_URL;
         currentOwl.style.transition = "";
         currentOwl.style.animation = "bob 2s infinite ease-in-out";
+        addThoughtBubble();  // Add thought bubble once owl settles
       }, 2000);
     }, { once: true });
   }, 1200);
@@ -56,10 +84,9 @@ function animateOwlIntoScreen() {
 // Function to animate the owl flying away to the right and disappearing with a flying GIF
 function animateOwlAway() {
   if (!currentOwl) return;
+  removeThoughtBubble(); // Remove thought bubble when flying away
 
-  // Switch to the flying GIF for a dynamic fly-away effect
   currentOwl.src = FLYING_OWL_GIF_URL;
-  
   currentOwl.style.animation = "";
   currentOwl.style.transition = "right 1.5s ease-in, opacity 1.5s ease-in";
   currentOwl.style.right = "-300px";
@@ -81,5 +108,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   } else if (message.action === "flyOwlAway") {
     animateOwlAway();
     sendResponse({ status: "Owl fly-away animation triggered on webpage" });
+  } else if (message.action === "removeThoughtBubble") {
+    removeThoughtBubble();
+    sendResponse({ status: "Thought bubble removed" });
   }
 });
