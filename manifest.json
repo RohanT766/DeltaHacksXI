@@ -6,7 +6,7 @@
     "action": {
       "default_popup": "popup.html"
     },
-    "permissions": ["tabs", "activeTab", "http://localhost/*"],
+    "permissions": ["tabs", "activeTab"],
     "host_permissions": ["<all_urls>"],
     "background": {
       "service_worker": "background.js"
