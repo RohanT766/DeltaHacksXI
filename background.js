@@ -118,44 +118,28 @@ Given to you is a screenshot of the user’s current activity on Chrome. Your jo
 `;
 
   // Prepare request for OpenAI Chat Completion (GPT-3.5, GPT-4, etc.)
-  fetch("https://api.openai.com/v1/chat/completions", {
+  fetch("http://localhost:8080/analyze_screenshot", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${OPENAI_API_KEY}`,
     },
     body: JSON.stringify({
-      model: "gpt-4o", // or "gpt-4" if you have access
-      messages: [
-        {
-            "role": "user",
-            "content": [
-                {
-                    "type": "text",
-                    "text": prompt,
-                },
-                {
-                    "type": "image_url",
-                    "image_url": {"url": base64Screenshot},
-                },
-            ],
-        }
-    ],
-      temperature: 0.0,
-      max_tokens: 10, // We only need a very short numeric answer
+      base64Screenshot: base64Screenshot,
+      goal: goal,
     }),
   })
     .then((response) => response.json())
     .then((data) => {
-      if (data.choices && data.choices.length > 0) {
-        const result = data.choices[0].message.content.trim();
-        console.log("OpenAI Off-Task Confidence Score:", result);
-        // Here you could do more with `result` as needed
+      // 'data' might look like { "score": "85" }
+      if (data) {
+        console.log("OpenAI Off-Task Confidence Score:", data);
+        // do something with data.score
       } else {
-        console.error("No valid response from OpenAI:", data);
+        console.error("No valid score returned from server:", data);
       }
     })
     .catch((error) => {
-      console.error("Error calling OpenAI API:", error);
+      console.error("Error calling Python API:", error);
     });
+  
 }
