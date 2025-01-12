@@ -59,18 +59,18 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Animate an owl in the active goal screen
+  // Animate the owl flying to the top-right corner of the browser tab
   function animateFlyingOwl(rect) {
     // Create a flying owl duplicate
     const flyingOwl = document.createElement("img");
     flyingOwl.src = "https://media.giphy.com/media/5BTz4HSGbL7l6su75e/giphy.gif";
     flyingOwl.className = "owl-fly";
 
-    // Set its initial position and size
+    // Set its initial position in the browser viewport
     flyingOwl.style.width = rect.width + "px";
     flyingOwl.style.height = rect.height + "px";
-    flyingOwl.style.left = rect.left + "px";
-    flyingOwl.style.top = rect.top + "px";
+    flyingOwl.style.left = `${rect.left}px`;
+    flyingOwl.style.top = `${rect.top}px`;
 
     // Append it to the body
     document.body.appendChild(flyingOwl);
@@ -78,8 +78,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Force reflow to apply initial position
     flyingOwl.getBoundingClientRect();
 
-    // Animate to the top-right corner
-    flyingOwl.style.transform = "translate(200px, -200px) scale(0.8)";
+    // Animate to the top-right corner of the browser
+    flyingOwl.style.transform = `translate(calc(100vw - ${rect.left + rect.width}px), calc(-${rect.top}px)) scale(0.8)`;
     flyingOwl.style.opacity = "0.7";
 
     // Remove the flying owl after the animation ends
