@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function displayGoalInput() {
     goalContainer.innerHTML = `
       <h1 class="owl-title">No Hooting Around</h1>
-      <p class="owl-paragraph">Hoot hoot! Enter your wise goal below:</p>
+      <p class="owl-paragraph">Hoot hoot! Enter your goal for this session below:</p>
 
       <!-- Main Owl GIF -->
       <img 
@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
         type="text" 
         id="goalInput" 
         class="owl-input" 
-        placeholder="e.g., Study under the moonlight..."
+        placeholder="e.g., Complete my politics essay..."
       />
       <button id="startBtn" class="owl-button">Start Tracking</button>
       <p id="statusMessage" class="owl-status"></p>
@@ -106,7 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
     goalContainer.innerHTML = `
       <h1 class="owl-title">Currently Perched Goal</h1>
       <p class="owl-paragraph">${goal}</p>
-      <button id="stopBtn" class="owl-button">Stop Tracking</button>
+      <button id="stopBtn" class="owl-button">Goal Completed</button>
       <p id="statusMessage" class="owl-status"></p>
     `;
 
@@ -165,3 +165,4 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.appendChild(persistentOwl);
   });
 });
+
