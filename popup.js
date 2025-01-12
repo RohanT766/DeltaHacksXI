@@ -13,16 +13,22 @@ document.addEventListener("DOMContentLoaded", () => {
   // Display the goal input field
   function displayGoalInput() {
     goalContainer.innerHTML = `
-      <h1>Set Your Goal</h1>
-      <input type="text" id="goalInput" placeholder="Enter your goal here..." />
-      <button id="startBtn">Start Tracking</button>
-      <p id="statusMessage" style="color: green; margin-top: 10px;"></p>
+      <h1 class="fun-title">Ready to Conquer Your Goals? ⚔️</h1>
+      <p class="fun-paragraph">Type in your epic quest below, brave adventurer!</p>
+      <input 
+        type="text" 
+        id="goalInput" 
+        class="fun-input" 
+        placeholder="Slay the procrastination dragon..." 
+      />
+      <button id="startBtn" class="fun-button">Launch Quest</button>
+      <p id="statusMessage" class="fun-status"></p>
     `;
 
     document.getElementById("startBtn").addEventListener("click", () => {
       const goalInput = document.getElementById("goalInput").value.trim();
       if (goalInput === "") {
-        updateStatusMessage("Please enter a valid goal.", "red");
+        updateStatusMessage("Please enter a valid quest, hero!", "red");
         return;
       }
 
@@ -31,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
           displayActiveGoal(response.goal);
           console.log(`Goal set: "${goalInput}". Tracking started.`);
         } else {
-          updateStatusMessage("Failed to start tracking.", "red");
+          updateStatusMessage("Oh no! Failed to launch quest.", "red");
         }
       });
     });
@@ -40,10 +46,10 @@ document.addEventListener("DOMContentLoaded", () => {
   // Display the active goal
   function displayActiveGoal(goal) {
     goalContainer.innerHTML = `
-      <h1>Current Goal</h1>
-      <p>${goal}</p>
-      <button id="stopBtn">Stop Tracking</button>
-      <p id="statusMessage" style="color: green; margin-top: 10px;"></p>
+      <h1 class="fun-title">Current Epic Quest ✨</h1>
+      <p class="fun-paragraph">${goal}</p>
+      <button id="stopBtn" class="fun-button">Conclude Quest</button>
+      <p id="statusMessage" class="fun-status"></p>
     `;
 
     document.getElementById("stopBtn").addEventListener("click", () => {
@@ -52,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
           displayGoalInput();
           console.log("Tracking stopped.");
         } else {
-          updateStatusMessage("Failed to stop tracking.", "red");
+          updateStatusMessage("Alas! Failed to end the quest.", "red");
         }
       });
     });
