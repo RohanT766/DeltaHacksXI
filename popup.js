@@ -52,6 +52,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
           // Then animate the flying owl
           animateFlyingOwl(rect);
+
+          // Listen for the popup closing
+          listenForPopupClose(rect);
         } else {
           updateStatusMessage("Uh-oh! We couldn’t start tracking.", "red");
         }
@@ -59,30 +62,26 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Animate an owl in the active goal screen
+  // Animate the owl flying to the top-right corner
   function animateFlyingOwl(rect) {
-    // Create a flying owl duplicate
     const flyingOwl = document.createElement("img");
     flyingOwl.src = "https://media.giphy.com/media/5BTz4HSGbL7l6su75e/giphy.gif";
     flyingOwl.className = "owl-fly";
 
-    // Set its initial position and size
+    // Set initial size and position
     flyingOwl.style.width = rect.width + "px";
     flyingOwl.style.height = rect.height + "px";
     flyingOwl.style.left = rect.left + "px";
     flyingOwl.style.top = rect.top + "px";
 
-    // Append it to the body
+    // Append to body
     document.body.appendChild(flyingOwl);
 
-    // Force reflow to apply initial position
-    flyingOwl.getBoundingClientRect();
-
     // Animate to the top-right corner
-    flyingOwl.style.transform = "translate(200px, -200px) scale(0.8)";
+    flyingOwl.style.transform = "translate(300px, -250px) scale(0.8)";
     flyingOwl.style.opacity = "0.7";
 
-    // Remove the flying owl after the animation ends
+    // Remove flying owl after animation ends
     flyingOwl.addEventListener("transitionend", () => {
       document.body.removeChild(flyingOwl);
     });
@@ -105,6 +104,27 @@ document.addEventListener("DOMContentLoaded", () => {
           updateStatusMessage("Hoot! Couldn't stop tracking.", "red");
         }
       });
+    });
+  }
+
+  // Recreate the owl when the popup is dismissed
+  function listenForPopupClose(rect) {
+    // Add a listener for when the popup is dismissed
+    window.addEventListener("unload", () => {
+      const returnedOwl = document.createElement("img");
+      returnedOwl.src = "https://media.giphy.com/media/5BTz4HSGbL7l6su75e/giphy.gif";
+      returnedOwl.className = "owl-return";
+
+      // Set size and position to match the original owl
+      returnedOwl.style.width = rect.width + "px";
+      returnedOwl.style.height = rect.height + "px";
+      returnedOwl.style.position = "absolute";
+      returnedOwl.style.left = rect.left + "px";
+      returnedOwl.style.top = rect.top + "px";
+      returnedOwl.style.zIndex = "9999"; // Ensure it appears above other content
+
+      // Append the recreated owl to the body
+      document.body.appendChild(returnedOwl);
     });
   }
 
