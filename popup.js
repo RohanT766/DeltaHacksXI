@@ -13,22 +13,22 @@ document.addEventListener("DOMContentLoaded", () => {
   // Display the goal input field
   function displayGoalInput() {
     goalContainer.innerHTML = `
-      <h1 class="fun-title">Ready to Conquer Your Goals? ⚔️</h1>
-      <p class="fun-paragraph">Type in your epic quest below, brave adventurer!</p>
+      <h1 class="owl-title">Owl's Honor!</h1>
+      <p class="owl-paragraph">“Hoot hoot! Enter your wise goal below.”</p>
       <input 
         type="text" 
         id="goalInput" 
-        class="fun-input" 
-        placeholder="Slay the procrastination dragon..." 
+        class="owl-input" 
+        placeholder="e.g. Study, exercise, read at dusk..."
       />
-      <button id="startBtn" class="fun-button">Launch Quest</button>
-      <p id="statusMessage" class="fun-status"></p>
+      <button id="startBtn" class="owl-button">Start Tracking</button>
+      <p id="statusMessage" class="owl-status"></p>
     `;
 
     document.getElementById("startBtn").addEventListener("click", () => {
       const goalInput = document.getElementById("goalInput").value.trim();
       if (goalInput === "") {
-        updateStatusMessage("Please enter a valid quest, hero!", "red");
+        updateStatusMessage("Please enter a valid goal, wise owl!", "red");
         return;
       }
 
@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
           displayActiveGoal(response.goal);
           console.log(`Goal set: "${goalInput}". Tracking started.`);
         } else {
-          updateStatusMessage("Oh no! Failed to launch quest.", "red");
+          updateStatusMessage("Uh-oh! We couldn’t start tracking.", "red");
         }
       });
     });
@@ -46,10 +46,10 @@ document.addEventListener("DOMContentLoaded", () => {
   // Display the active goal
   function displayActiveGoal(goal) {
     goalContainer.innerHTML = `
-      <h1 class="fun-title">Current Epic Quest ✨</h1>
-      <p class="fun-paragraph">${goal}</p>
-      <button id="stopBtn" class="fun-button">Conclude Quest</button>
-      <p id="statusMessage" class="fun-status"></p>
+      <h1 class="owl-title">Currently Perched Goal</h1>
+      <p class="owl-paragraph">${goal}</p>
+      <button id="stopBtn" class="owl-button">Stop Tracking</button>
+      <p id="statusMessage" class="owl-status"></p>
     `;
 
     document.getElementById("stopBtn").addEventListener("click", () => {
@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
           displayGoalInput();
           console.log("Tracking stopped.");
         } else {
-          updateStatusMessage("Alas! Failed to end the quest.", "red");
+          updateStatusMessage("Hoot! Couldn't stop tracking.", "red");
         }
       });
     });
@@ -68,6 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function updateStatusMessage(message, color) {
     const statusMessage = document.getElementById("statusMessage");
     statusMessage.textContent = message;
+    // We still handle dynamic color in JS
     statusMessage.style.color = color;
   }
 });
