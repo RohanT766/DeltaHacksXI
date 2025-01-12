@@ -170,7 +170,9 @@ function analyzeScreenshotWithOpenAI(base64Screenshot, goal, sessionId) {
         console.log("OpenAI Off-Task Confidence Score:", offTaskScore);
         if (offTaskScore > 70) {
           handleOffTask(currentSession.tabId);
-        } else {
+        } else if (offTaskScore >= 30) {
+          showBlurOverlay(currentSession.tabId, goal, base64Screenshot);
+        } else {      
           // Not distracted: instruct content script to remove thought bubble
           chrome.tabs.sendMessage(currentSession.tabId, { action: "removeThoughtBubble" }, () => {
             if (chrome.runtime.lastError) {
@@ -279,6 +281,13 @@ function showBlurOverlay(tabId, goal, base64Screenshot) {
             chrome.scripting.executeScript({
               target: { tabId: tabId },
               func: removeBlurOverlay,
+            });
+            chrome.tabs.sendMessage(currentSession.tabId, { action: "removeThoughtBubble" }, () => {
+              if (chrome.runtime.lastError) {
+                console.error("Error sending removeThoughtBubble message:", chrome.runtime.lastError);
+              } else {
+                console.log("Thought bubble removal message sent.");
+              }
             });
           } else {
             console.log("User response failed validation. Triggering handleOffTask.");

@@ -37,7 +37,7 @@ function addThoughtBubble() {
   // Position the bubble next to the owl
   const owlRect = currentOwl.getBoundingClientRect();
   thoughtBubble.style.top = `${owlRect.top - 20}px`;
-  thoughtBubble.style.left = `${owlRect.right + 10}px`;
+  thoughtBubble.style.left = `${owlRect.right - 200}px`;
 
   document.body.appendChild(thoughtBubble);
 }
