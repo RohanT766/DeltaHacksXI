@@ -53,6 +53,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
           // Then animate the flying owl
           animateFlyingOwl(rect);
+
+          // Send a message to content.js to animate the owl on the active webpage
+          sendOwlToWebpage();
         } else {
           updateStatusMessage("Uh-oh! We couldn’t start tracking.", "red");
         }
@@ -124,6 +127,23 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!statusMessage) return;
     statusMessage.textContent = message;
     statusMessage.style.color = color;
+  }
+
+  // Send a message to content.js to animate the owl on the active webpage
+  function sendOwlToWebpage() {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      chrome.tabs.sendMessage(
+        tabs[0].id,
+        { action: "flyOwl" },
+        (response) => {
+          if (chrome.runtime.lastError) {
+            console.error("Error communicating with content script:", chrome.runtime.lastError);
+          } else {
+            console.log(response.status); // Log the response from content.js
+          }
+        }
+      );
+    });
   }
 
   // Add an owl at the saved position when the popup loses focus (user clicks off)
