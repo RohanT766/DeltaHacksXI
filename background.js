@@ -11,20 +11,6 @@ let currentGoal = "";      // Stores the active goal
 // ----------------------------------
 const OPENAI_API_KEY = "placeholder";
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.type === "startTracking") {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      const activeTab = tabs[0];
-      chrome.scripting.executeScript({
-        target: { tabId: activeTab.id },
-        files: ["content.js"]
-      });
-    });
-    sendResponse({ success: true });
-  }
-});
-
-
 // Start or stop tracking
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "startTracking") {
