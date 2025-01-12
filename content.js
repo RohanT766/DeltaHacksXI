@@ -4,7 +4,7 @@ function animateOwlIntoScreen() {
     const flyingOwl = document.createElement("img");
     flyingOwl.src = "https://media.giphy.com/media/5BTz4HSGbL7l6su75e/giphy.gif";
     flyingOwl.style.position = "fixed";
-    flyingOwl.style.top = "-200px"; // Start completely off-screen at the top
+    flyingOwl.style.top = "0px"; // Start completely off-screen at the top
     flyingOwl.style.right = "-200px"; // Start completely off-screen on the right
     flyingOwl.style.transform = "translate(0, 0)"; // No centering required here
     flyingOwl.style.width = "300px"; // Owl size
@@ -18,7 +18,7 @@ function animateOwlIntoScreen() {
     setTimeout(() => {
         flyingOwl.style.top = "20px"; // Final position inside the screen vertically
         flyingOwl.style.right = "20px"; // Final position inside the screen horizontally
-    }, 1200); // Slight delay to ensure proper rendering
+    }, 1500); // Slight delay to ensure proper rendering
   
     // Optionally remove the owl after a delay or keep it on screen
     setTimeout(() => {
