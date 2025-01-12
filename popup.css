@@ -1,19 +1,20 @@
 /* Reset */
 * {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
   }
   
   /* Body of the popup */
   body {
-    width: 400px; /* Original width */
-    min-height: 500px; /* Original height */
+    width: 450px; /* Increased width */
+    min-height: 500px; /* Increased height */
     font-family: "Poppins", "Segoe UI", Tahoma, sans-serif;
     background: linear-gradient(160deg, #f3f1e6 0%, #e9e7dc 100%);
     border-radius: 15px;
     overflow: hidden;
     border: 2px solid #d5cbb2;
+    position: relative; /* To position flying owl within the popup */
   }
   
   /* Content container */
@@ -31,7 +32,7 @@
   /* Title */
   .owl-title {
     margin-bottom: 15px;
-    font-size: 1.8rem;
+    font-size: 1.8rem; /* Larger title */
     color: #5c5340;
     text-shadow: 1px 1px #faf9f2;
     text-align: center;
@@ -40,7 +41,7 @@
   /* Paragraph */
   .owl-paragraph {
     margin-bottom: 20px;
-    font-size: 1.2rem;
+    font-size: 1.2rem; /* Larger text */
     color: #5c5340;
     text-align: center;
   }
@@ -48,7 +49,7 @@
   /* Owl GIF */
   .owl-gif {
     display: block;
-    width: 300px; /* Original size */
+    width: 300px; /* Larger width */
     height: auto;
     margin: 0 auto 20px;
     border-radius: 10px;
@@ -60,8 +61,8 @@
     display: block;
     width: 100%;
     margin-bottom: 15px;
-    padding: 15px;
-    font-size: 1.2rem;
+    padding: 15px; /* Larger padding */
+    font-size: 1.2rem; /* Larger font */
     border: 2px solid #cabe9b;
     border-radius: 8px;
     background-color: #fefefc;
@@ -71,9 +72,9 @@
   
   /* Button */
   .owl-button {
-    padding: 15px 25px;
+    padding: 15px 25px; /* Larger button */
     margin-right: 10px;
-    font-size: 1.2rem;
+    font-size: 1.2rem; /* Larger font */
     cursor: pointer;
     border: 2px solid #cabe9b;
     border-radius: 8px;
@@ -87,7 +88,7 @@
     transition: transform 0.1s, box-shadow 0.1s;
   }
   
-  /* Hover and active button effects */
+  /* Button hover/active effects */
   .owl-button:hover {
     background: linear-gradient(to bottom, #eee6d4, #c9b79c);
     transform: scale(1.03);
@@ -102,11 +103,11 @@
       0 2px 3px rgba(0, 0, 0, 0.3);
   }
   
-  /* Status message */
-  .owl-status {
-    margin-top: 15px;
-    font-size: 1rem;
-    font-weight: bold;
-    text-shadow: 1px 1px #faf9f2;
+  /* Flying owl animation */
+  .owl-fly {
+    position: absolute;
+    z-index: 9999; /* Ensure it appears above all content */
+    width: 300px; /* Match the large owl size */
+    transition: transform 1.5s ease-in-out, opacity 1.5s ease-in-out;
+    pointer-events: none; /* Allow clicks through the flying owl */
   }
-  
