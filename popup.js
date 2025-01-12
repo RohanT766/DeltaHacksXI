@@ -126,8 +126,8 @@ document.addEventListener("DOMContentLoaded", () => {
     statusMessage.style.color = color;
   }
 
-  // Add an owl at the saved position when the popup closes
-  document.body.onblur = () => {
+  // Add an owl at the saved position when the popup loses focus (user clicks off)
+  document.body.addEventListener("blur", () => {
     if (!finalOwlPosition) return; // Only proceed if there's a saved position
 
     const persistentOwl = document.createElement("img");
@@ -143,5 +143,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Append the persistent owl to the body
     document.body.appendChild(persistentOwl);
-  };
+  });
 });
