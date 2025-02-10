@@ -235,16 +235,19 @@ function injectGif(gifSrc) {
   const body = document.body;
   const img = document.createElement('img');
   img.src = gifSrc;
-  img.style.position = 'absolute';
-  img.style.top = '0';
-  img.style.left = '0';
-  img.style.width = '100%';
-  img.style.height = '100%';
+  img.style.position = 'fixed'; // Fixed to cover viewport
+  img.style.top = '50%';
+  img.style.left = '50%';
+  img.style.width = '100vw'; // Fill viewport width
+  img.style.height = '100vh'; // Fill viewport height
+  img.style.objectFit = 'cover'; // Crop if needed, keep centered
+  img.style.transform = 'translate(-50%, -50%)'; // Center correctly
   img.style.zIndex = '9999999';
   img.style.pointerEvents = 'none';
   img.style.opacity = '1';
   body.appendChild(img);
 }
+
 
 function showBlurOverlay(tabId, goal, base64Screenshot) {
   console.log(`Intermediate off-task behavior detected for TabId = ${tabId}`);
