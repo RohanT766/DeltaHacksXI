@@ -15,7 +15,6 @@ A Chrome extension that helps users stay focused on their goals using an animate
 - **Frontend**: HTML, CSS, JavaScript (Chrome Extension)
 - **Backend**: Python with Flask
 - **AI Integration**: OpenAI GPT-4 Vision API
-- **APIs**: OpenAI API
 
 ## Installation
 
@@ -44,6 +43,12 @@ export OPENAI_API_KEY=your_api_key_here
    - Select the extension directory
 
 ## Usage
+
+### Ensure the Backend is Running:
+```bash
+# Run the Flask server
+python backend.py
+```
 
 1. Click the extension icon in Chrome
 2. Enter your current work/study goal
@@ -74,27 +79,6 @@ export OPENAI_API_KEY=your_api_key_here
    - 0-30% off-task: No intervention
    - 30-70% off-task: User prompted to justify their activity
    - 70-100% off-task: Automatic redirection to previous productive page
-
-## Development
-
-### Backend Development
-```bash
-# Run the Flask server
-python backend.py
-```
-
-### Extension Development
-1. Make changes to the extension files
-2. Reload the extension in Chrome's extension manager
-3. Test functionality
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
 
 ## License
 
