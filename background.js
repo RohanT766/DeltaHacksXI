@@ -149,7 +149,8 @@ function analyzeScreenshotWithOpenAI(base64Screenshot, goal, sessionId) {
     return;
   }
 
-  fetch("http://localhost:8080/analyze_screenshot", {
+  // if running locally, change the URL to "http://localhost:8080"
+  fetch("https://analyze-screenshot-453520806811.us-central1.run.app", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
