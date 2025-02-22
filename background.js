@@ -12,6 +12,20 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     isTracking = true;
     currentGoal = message.goal;
     console.log(`Goal set: ${currentGoal}`);
+
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs.length > 0) {
+        const activeTab = tabs[0];
+        if (activeTab.url && !activeTab.url.startsWith("chrome://") && !activeTab.url.startsWith("about:")) {
+          startSession(activeTab.id, activeTab.url);
+        } else {
+          console.warn("Active tab has no valid URL for tracking.");
+        }
+      } else {
+        console.warn("No active tab found.");
+      }
+    });
+
     sendResponse({ success: true, goal: currentGoal });
   } else if (message.type === "stopTracking") {
     isTracking = false;
@@ -110,7 +124,7 @@ function startSession(tabId, url) {
     } else {
       console.log("Session ended before screenshot could be taken.");
     }
-  }, 2000);
+  }, 4000);
 }
 
 // Function to end the current session
@@ -149,7 +163,7 @@ function analyzeScreenshotWithOpenAI(base64Screenshot, goal, sessionId) {
     return;
   }
 
-  // if running locally, change the URL to "http://localhost:8080"
+  // if running locally, change the URL to "http://localhost:8080/analyze_screenshot"
   fetch("https://analyze-screenshot-453520806811.us-central1.run.app", {
     method: "POST",
     headers: {
@@ -266,7 +280,8 @@ function showBlurOverlay(tabId, goal, base64Screenshot) {
 
       const userResponse = message.response;
 
-      fetch("http://localhost:8080/validate_reason", {
+      // if running locally, change the URL to "http://localhost:8080/validate_reason"
+      fetch("https://validate-reason-453520806811.us-central1.run.app", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
