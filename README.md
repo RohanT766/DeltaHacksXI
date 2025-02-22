@@ -13,8 +13,8 @@ A Chrome extension that helps users stay focused on their goals using an animate
 ## Technical Stack
 
 - **Frontend**: HTML, CSS, JavaScript (Chrome Extension)
-- **Backend**: Python with Flask
-- **AI Integration**: OpenAI GPT-4 Vision API
+- **Backend**: Python with Flask / GCP Functions Framework
+- **AI Integration**: Gemini API
 
 ## Installation
 
@@ -23,17 +23,27 @@ A Chrome extension that helps users stay focused on their goals using an animate
 git clone "https://github.com/RohanT766/DeltaHacksXI"
 ```
 
-2. Set up the backend:
+2a. (Optional; if running backend locally) Set up the backend:
 ```bash
 # Create and activate a virtual environment
 python -m venv .venv
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 
 # Install dependencies
-pip install flask openai flask-cors
+pip install flask openai
 
 # Set up environment variables
-export OPENAI_API_KEY=your_api_key_here
+export GEMINI_API_KEY=your_api_key_here
+```
+2b. (Optional; continued) Edit these two lines in background.js to point to local API endpoints:
+```javascript
+// change the URL to "http://localhost:8080/analyze_screenshot"
+fetch("https://analyze-screenshot-453520806811.us-central1.run.app", {
+.
+.
+.
+// change the URL to "http://localhost:8080/validate_reason"
+fetch("https://validate-reason-453520806811.us-central1.run.app", {
 ```
 
 3. Load the extension in Chrome:
@@ -44,7 +54,7 @@ export OPENAI_API_KEY=your_api_key_here
 
 ## Usage
 
-### Ensure the Backend is Running:
+### If running backend locally, ensure the server is on:
 ```bash
 # Run the Flask server
 python backend.py
@@ -74,7 +84,7 @@ python backend.py
 
 1. **Goal Setting**: Users set their productivity goals through the extension popup
 2. **Screenshot Analysis**: The extension periodically captures screenshots of active tabs
-3. **AI Analysis**: Screenshots are analyzed by GPT-4 Vision to determine relevance to the user's goal
+3. **AI Analysis**: Screenshots are analyzed by Gemini 2.0 to determine relevance to the user's goal
 4. **Response System**:
    - 0-30% off-task: No intervention
    - 30-70% off-task: User prompted to justify their activity
@@ -86,5 +96,5 @@ MIT License
 
 ## Acknowledgments
 
-- OpenAI for GPT-4 Vision API
+- Google for Gemini API
 - Giphy for owl animations
