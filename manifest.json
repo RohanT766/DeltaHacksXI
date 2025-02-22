@@ -2,8 +2,8 @@
   "manifest_version": 3,
   "name": "No Hooting Around",
   "version": "1.0",
-  "description": "Hoot hoot! Track your goals with an animated owl.",
-  "permissions": ["activeTab", "scripting", "storage"],
+  "description": "Hoot hoot! Intelligently block distracting pages with Ollie the Owl.",
+  "permissions": ["activeTab", "scripting"],
   "host_permissions": ["<all_urls>"],
   "web_accessible_resources": [
     {
